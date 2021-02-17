@@ -1,0 +1,15 @@
+numpy
+tensorflow-gpu==2.0.0
+matplotlib
+joblib
+keras
+plotly
+sqlalchemy
+flask
+python-dotenv
+flaskcode
+pandas
+hiplot
+dash
+h5py
+termcolor

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+    <div class="row" style="padding-top:10px;">
+        <div class="col-12">
+            <div class="card shadow mb-6">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">{{ script_file_name }}</h6>
+                </div>
+                <!-- Card Body -->
+                <pre style="margin: 0">
+            <code class="language-python">
+{{ file_contents }}
+            </code>
+        </pre>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

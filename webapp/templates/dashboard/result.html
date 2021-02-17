@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+    {% if training_hyper_parameters | length > 0 %}
+
+        <div class="row" style="margin-top: 10px">
+            <div class="col-12">
+                <button class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"
+                        onclick='generate_script({{ analysis.id }}, "{{ analysis.db_filename }}")'
+                        data-toggle="modal" data-target="#generate_scriptModal">
+                    <i class="fas fa-download fa-sm text-white-50"></i> Generate Script
+                </button>
+                <!-- Modal -->
+                <div class="modal fade" id="generate_scriptModal" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Script generated successfully!</h5>
+                            </div>
+                            <div class="modal-body">Script name: <b>script_aes_{{ analysis.id }}.py</b>. Check your
+                                'scripts' folder inside your project directory.
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script type="application/javascript">
+                    function generate_script(analysis_id, table_name) {
+                        $.ajax({
+                            url: '/generate_script/' + analysis_id + "/" + table_name,
+                            success: function (data) {
+
+                            }
+                        });
+                    }
+                </script>
+            </div>
+        </div>
+
+        {% if training_hyper_parameters | length == 1 %}
+
+            <div class="row" style="padding-top:10px;">
+                <div class="col-12">
+                    <div class="card shadow mb-6">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Training Information</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            {% for hyper_parameter in training_hyper_parameters[0] %}
+                                <div class="row">
+                                    <div class="col-xl-12 col-md-12 mb-4">
+                                        <h5>Hyper-Parameters for Model {{ loop.index }}</h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    {% for key, value in hyper_parameter.items() %}
+                                        <div class="col-xl-2 col-md-6 mb-4">
+                                            <div class="card border-left-dark shadow h-100 py-2">
+                                                <div class="card-body">
+                                                    <div class="row no-gutters align-items-center">
+                                                        <div class="col mr-2">
+                                                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                                                {{ key }}
+                                                            </div>
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ value }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="row" style="padding-top:10px;">
+                <div class="col-12">
+                    <div class="card shadow mb-6">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Hyper-Parameters ({{ analysis.dataset }})</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        {% for hp in hyper_parameters[0].hyper_parameters %}
+                                            {% for key, value in hp.items() %}
+                                                <th style="padding: 5px; font-size: 13px">{{ key }}</th>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for hp in hyper_parameters %}
+                                        {% for hyper_parameter in hp.hyper_parameters %}
+                                            <tr>
+                                                {% for key, value in hyper_parameter.items() %}
+                                                    {% if hp.id == hyper_parameter_search.best_hyper_parameters %}
+                                                        <td class="text-success"
+                                                            style="padding: 5px; font-size: 13px; font-weight: bold">{{ value }}</td>
+                                                    {% else %}
+                                                        <td style="padding: 5px; font-size: 13px">{{ value }}</td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="row" style="padding-top:10px;">
+        <div class="col-12">
+            <div class="card shadow mb-6">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Leakage Model</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    <div class="row">
+                        {% for leakage_model in leakage_model_parameters %}
+                            {% for key, value in leakage_model.items() %}
+                                <div class="col-xl-2 col-md-6 mb-4">
+                                    <div class="card border-left-dark shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                                        {{ key }}
+                                                    </div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ value }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if training_hyper_parameters | length == 1 %}
+        <div class="row" style="padding-top:10px;">
+            <div class="col-12">
+                <div class="card shadow mb-6">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Keras Model Information</h6>
+                    </div>
+                    <pre style="margin: 0">
+            <code class="language-python">
+{{ neural_network_description }}
+            </code>
+        </pre>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row" style="padding-top:10px;">
+            <div class="col-12">
+                <div class="card shadow mb-6">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Keras Model Information</h6>
+                    </div>
+                    {{ neural_network_description }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+
+        <div class="col col-lg-12 col-xl-6 col-md-12" style="padding-top:10px;">
+            <div class="card shadow mb-6">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Accuracy</h6>
+                    <button class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"
+                            onclick='generate_plot({{ analysis.id }}, "{{ analysis.db_filename }}", "accuracy")'
+                            data-toggle="modal" data-target="#generate_plotModal">
+                        <i class="fas fa-download fa-sm text-white-50"></i> Generate PNG Plot
+                    </button>
+                </div>
+                <div>
+                    <iframe src="http://127.0.0.1:5000/dash/accuracy/" height="500" width="100%" style="border: none"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="col col-lg-12 col-xl-6 col-md-12" style="padding-top:10px;">
+            <div class="card shadow mb-6">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Loss</h6>
+                    <button class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"
+                            onclick='generate_plot({{ analysis.id }}, "{{ analysis.db_filename }}", "loss")'
+                            data-toggle="modal" data-target="#generate_plotModal">
+                        <i class="fas fa-download fa-sm text-white-50"></i> Generate PNG Plot
+                    </button>
+                </div>
+                <div>
+                    <iframe src="http://127.0.0.1:5000/dash/loss/" height="500" width="100%" style="border: none"></iframe>
+                </div>
+            </div>
+        </div>
+
+        {% for metric_plots in all_plots %}
+            <div class="col col-lg-12 col-xl-6 col-md-12" style="padding-top:10px;">
+                <div class="card shadow mb-6">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ metric_plots.title }}</h6>
+                        <button class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"
+                                onclick='generate_plot({{ analysis.id }}, "{{ analysis.db_filename }}", "{{ metric_plots.title }}")'
+                                data-toggle="modal" data-target="#generate_plotModal">
+                            <i class="fas fa-download fa-sm text-white-50"></i> Generate PNG Plot
+                        </button>
+                    </div>
+                    <div class="chart" id="{{ metric_plots.title }}_plot">
+                        <script>
+                            var plotly_layout = {{ metric_plots.layout_plotly | tojson }};
+                            {% for plot in metric_plots.plots %}
+                                var graphs = {{plot | safe}};
+                                Plotly.plot('{{ metric_plots.title }}_plot', graphs, plotly_layout);
+                            {% endfor %}
+                        </script>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-12 col-xl-12 col-md-12" style="padding-top:10px;">
+            <div class="card shadow mb-12">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Key Rank (or Guessing Entropy)</h6>
+                    <button class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"
+                            onclick='generate_plot({{ analysis.id }}, "{{ analysis.db_filename }}", "Guessing_Entropy")'
+                            data-toggle="modal" data-target="#generate_plotModal">
+                        <i class="fas fa-download fa-sm text-white-50"></i> Generate PNG Plot
+                    </button>
+                </div>
+                <div>
+                    <iframe src="http://127.0.0.1:5000/dash/key_ranks/" height="500" width="100%" style="border: none"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12 col-xl-12 col-md-12" style="padding-top:10px;">
+            <div class="card shadow mb-12">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Success Rate</h6>
+                    <button class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"
+                            onclick='generate_plot({{ analysis.id }}, "{{ analysis.db_filename }}", "Success_Rate")'
+                            data-toggle="modal" data-target="#generate_plotModal">
+                        <i class="fas fa-download fa-sm text-white-50"></i> Generate PNG Plot
+                    </button>
+                </div>
+                <div>
+                    <iframe src="http://127.0.0.1:5000/dash/success_rates/" height="500" width="100%" style="border: none"></iframe>
+                </div>
+            </div>
+        </div>
+
+        {% for visualization_plots in all_visualization_plots %}
+            {% for visualization_metric_plot in visualization_plots.plots %}
+                {% set key_byte_index = loop.index - 1 %}
+                <div class="col-lg-12 col-xl-12 col-md-12" style="padding-top:10px;">
+                    <div class="card shadow mb-12">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Input Gradients</h6>
+                        </div>
+                        <div class="chart" id="visualization_plot_key_byte_{{ key_byte_index }}">
+                            <script>
+                                var plotly_layout = {{ visualization_plots.layout_plotly | tojson }};
+                                {% for plot in visualization_metric_plot %}
+                                    var graphs = {{plot | safe}};
+                                    Plotly.plot('visualization_plot_key_byte_' + {{ key_byte_index }}, graphs, plotly_layout);
+                                {% endfor %}
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% for visualization_heatmap_plots in all_visualization_heatmap_plots %}
+            {% for visualization_heatmap_metric_plot in visualization_heatmap_plots.plots %}
+                {% set key_byte_index = loop.index - 1 %}
+                <div class="col-lg-12 col-xl-12 col-md-12" style="padding-top:10px;">
+                    <div class="card shadow mb-12">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Input Gradients HeatMap</h6>
+                        </div>
+                        <div class="chart" id="visualization_heatmap_plot_key_byte_{{ key_byte_index }}">
+                            <script>
+                                var plotly_layout = {{ visualization_heatmap_plots.layout_plotly | tojson }};
+                                {% for plot in visualization_heatmap_metric_plot %}
+                                    var graphs = {{plot | safe}};
+                                    Plotly.plot('visualization_heatmap_plot_key_byte_' + {{ key_byte_index }}, graphs, plotly_layout);
+                                {% endfor %}
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% for confusion_matrix_plots in all_confusion_matrix_plots %}
+            {% for confusion_matrix_metric_plot in confusion_matrix_plots.plots %}
+                {% set key_byte_index = loop.index - 1 %}
+                <div class="col-lg-12 col-xl-12 col-md-12" style="padding-top:10px;">
+                    <div class="card shadow mb-12">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Confusion Matrix</h6>
+                        </div>
+                        <div class="chart" id="confusion_matrix_plot_key_byte_{{ key_byte_index }}">
+                            <script>
+                                var plotly_layout = {{ confusion_matrix_plots.layout_plotly | tojson }};
+                                {% for plot in confusion_matrix_metric_plot %}
+                                    var graphs = {{plot | safe}};
+                                    Plotly.plot('confusion_matrix_plot_key_byte_' + {{ key_byte_index }}, graphs, plotly_layout);
+                                {% endfor %}
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <!-- Modal -->
+        <div class="modal fade" id="generate_plotModal" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Plot generated successfully!</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="application/javascript">
+            function generate_plot(analysis_id, table_name, metric) {
+                $.ajax({
+                    url: '/generate_plot/' + analysis_id + "/" + table_name + "/" + metric,
+                    success: function (data) {
+                    }
+                });
+            }
+        </script>
+    </div>
+
+
+{% endblock %}
+

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+    <div class="row">
+        {% for dataset_plots in all_plots %}
+            <div class="col col-lg-12 col-xl-12 col-md-12" style="padding-top:10px;">
+                <div class="card shadow mb-12">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ dataset_plots.title }}</h6>
+                    </div>
+                    <div class="chart" id="{{ dataset_plots.title }}_plot" style="width:98%">
+                        <script>
+                            var plotly_layout = {{ dataset_plots.layout_plotly | tojson }};
+                            var graphs = {{dataset_plots.plots | safe}};
+                            Plotly.plot('{{ dataset_plots.title }}_plot', graphs, plotly_layout);
+                        </script>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

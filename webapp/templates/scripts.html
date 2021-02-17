@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+    <!-- Page Heading -->
+    <h3 class="h3 mb-2 text-gray-800">Scripts</h3>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-4 col-xl-4 col-md-6">
+                    <h6><b class="text-gray-900">Script Filename</b></h6>
+                    {% for file in files %}
+                        <h6>{{ file }}</h6>
+                    {% endfor %}
+                </div>
+                <div class="col-lg-8 col-xl-8 col-md-6">
+                    <h6><b class="text-gray-900">Description</b></h6>
+                    {% for file in files_description %}
+                        <h6>{{ file }}</h6>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

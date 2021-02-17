@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+    <style>
+        th, td {
+            font-size: 12px !important;
+        }
+    </style>
+
+    <!-- DataTales Example -->
+    {% for analyses in all_tables %}
+        {% set tableloop = loop %}
+        <div class="card shadow mb-4" style="margin:10px">
+            <div class="card-body">
+
+                <h4 class="h3 mb-2 text-gray-800">Database Name:
+                    <span style="color: #1e88e5; font-weight: 700">{{ all_tables_names[tableloop.index - 1] }}</span>
+                </h4>
+
+<!--                Paralell Plot-->
+<!--                <a href="{{ url_for('search', table_name=all_tables_names[tableloop.index - 1]) }}">-->
+<!--                    <i class="fas fa-fw fa-chart-bar text-dark"></i>-->
+<!--                </a>-->
+
+                {% if analyses|length %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Dataset</th>
+                                <th>Datetime</th>
+                                <th>Key Rank</th>
+                                <th>Elapsed Time</th>
+                                <th>NN Name</th>
+                                <th>Results</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for analysis in analyses %}
+                                <tr>
+                                    <td>{{ analysis.id }}</td>
+                                    <td>{{ analysis.dataset }}</td>
+                                    <td>{{ analysis.datetime }}</td>
+                                    <td style="padding: 0px;">
+                                        <div class="table-responsive"></div>
+                                        <table width="100%" cellspacing="0">
+                                            <thead>
+                                            <tr>
+                                                <th>Key Byte</th>
+                                                <th>Metric</th>
+                                                <th>Guessing Entropy</th>
+                                                <th>Success Rate</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for key_ranks in analysis.key_ranks %}
+                                                {% set rowloop = loop %}
+                                                {% for key_rank in key_ranks %}
+                                                    <tr>
+                                                        <td style="padding: 2px; font-size: 13px; text-align:center">{{ key_rank.key_byte }}</td>
+                                                        <td style="padding: 2px; font-size: 13px;">
+                                                            <b class="text-success">{{ key_rank.metric }}</b>
+                                                        </td>
+                                                        <td style="padding: 2px; font-size: 13px; text-align:center">
+                                                            <b class="text-success">{{ key_rank.key_rank }}</b>
+                                                        </td>
+                                                        <td style="padding: 2px; font-size: 13px; text-align:center">
+                                                            <b class="text-success">{{ analysis.success_rates[rowloop.index - 1][loop.index - 1]['success_rate'] }}</b>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td>{{ analysis.elapsed_time }}</td>
+                                    <td>{{ analysis.neural_network_name }}</td>
+                                    <td style="font-size: 20px !important;">
+                                        <a href="{{ url_for('result', analysis_id=analysis.id, table_name=all_tables_names[tableloop.index - 1]) }}">
+                                            <i class="fas fa-fw fa-chart-area text-dark"></i>
+                                        </a>
+                                        <a style="cursor: pointer" data-toggle="modal" data-target="#delete_analysis_modal" onclick='set_analysis_to_delete({{ analysis.id }}, "{{ all_tables_names[tableloop.index - 1] }}")'>
+                                            <i class="fas fa-fw fa-trash text-danger"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <h6>Nothing to show</h6>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="delete_analysis_modal" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Are you sure you want to delete this analysis?</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-danger" type="button" onclick='delete_analysis()'>Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="application/javascript">
+            var tablename = ""
+            var analysisid = 0
+            function set_analysis_to_delete(analysis_id, table_name) {
+                tablename = table_name
+                analysisid = analysis_id
+                console.log(tablename)
+                console.log(analysisid)
+            }
+            function delete_analysis() {
+                $.ajax({
+                    url: '/delete_analysis/' + analysisid + "/" + tablename,
+                    success: function (data) {
+                        location.reload();
+                    }
+                });
+            }
+        </script>
+    {% endfor %}
+{% endblock %}
