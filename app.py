@@ -85,7 +85,7 @@ def scripts():
     return "ok"
 
 
-databases_root_folder = "C:/Users/guilh/PycharmProjects/aisy/databases/"
+databases_root_folder = "C:/Users/guilh/PycharmProjects/aisy_framework/databases/"
 datasets_root_folder = "D:/traces/"
 
 

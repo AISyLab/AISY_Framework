@@ -82,6 +82,7 @@ class Aisy:
         self.compute_ge_active = True
         self.timestamp = 0
         self.save_database = True
+        self.save_to_npz = False
 
         self.z_score_mean = None
         self.z_score_std = None
@@ -306,8 +307,11 @@ class Aisy:
         if self.early_stopping_active:
             self.timestamp = str(time.time()).replace(".", "")
             self.callback_early_stopping = EarlyStoppingCallback(x_profiling_reshaped, y_profiling, plaintext_profiling,
+                                                                 ciphertext_profiling, key_profiling,
                                                                  x_validation_reshaped, y_validation, plaintext_validation,
+                                                                 ciphertext_validation, key_validation,
                                                                  x_attack_reshaped, y_attack, plaintext_attack,
+                                                                 ciphertext_attack, key_attack,
                                                                  self.target_params, self.leakage_model, self.key_rank_executions,
                                                                  key_rank_report_interval, key_rank_attack_traces,
                                                                  self.early_stopping_metrics, self.timestamp)
@@ -319,8 +323,11 @@ class Aisy:
             for custom_callback in custom_callbacks:
                 print(custom_callback['parameters'])
                 custom_callback_obj = custom_callback['class'](x_profiling_reshaped, y_profiling, plaintext_profiling,
+                                                               ciphertext_profiling, key_profiling,
                                                                x_validation_reshaped, y_validation, plaintext_validation,
+                                                               ciphertext_validation, key_validation,
                                                                x_attack_reshaped, y_attack, plaintext_attack,
+                                                               ciphertext_attack, key_attack,
                                                                self.target_params, self.leakage_model, self.key_rank_executions,
                                                                key_rank_report_interval, key_rank_attack_traces,
                                                                custom_callback['parameters'])
@@ -602,7 +609,7 @@ class Aisy:
 
     def run(self, key_rank_executions=100, key_rank_report_interval=10, key_rank_attack_traces=1000, visualization=None,
             data_augmentation=None, ensemble=None, grid_search=None, random_search=None, early_stopping=None, confusion_matrix=False,
-            callbacks=None, save_database=True, compute_ge=True):
+            callbacks=None, save_database=True, compute_ge=True, save_to_npz=None):
 
         """
 
@@ -620,7 +627,8 @@ class Aisy:
         :param confusion_matrix: boolean variable to set the computation of confusion matrix
         :param callbacks: list of custom callbacks
         :param save_database: boolean variable setting database feature
-        :param compute_ge: boolean variable setting guessing entripy feature
+        :param compute_ge: boolean variable setting guessing entropy feature
+        :param save_to_npz: .npz file name to where results are saved (file results are placed in 'resources/npz' folder)
         :return: None
         """
 
@@ -629,28 +637,28 @@ class Aisy:
             return
 
         if "filename" not in self.target_params.keys():
-            print("ERROR: Dataset 'filename' not specified. Please use set_filename method to specify it.")
+            print("ERROR 2: Dataset 'filename' not specified. Please use set_filename method to specify it.")
             return
 
         if "key" not in self.target_params.keys():
-            print("ERROR: Dataset 'key' not specified. Please use set_key method to specify it.")
+            print("ERROR 3: Dataset 'key' not specified. Please use set_key method to specify it.")
             return
 
         if "first_sample" not in self.target_params.keys():
-            print("ERROR: Dataset 'first_sample' not specified. Please use set_first_sample method to specify it.")
+            print("ERROR 4 : Dataset 'first_sample' not specified. Please use set_first_sample method to specify it.")
             return
 
         if "number_of_samples" not in self.target_params.keys():
-            print("ERROR: Dataset 'number_of_samples' not specified. Please use set_number_of_samples method to specify it.")
+            print("ERROR 5: Dataset 'number_of_samples' not specified. Please use set_number_of_samples method to specify it.")
             return
 
         if "number_of_profiling_traces" not in self.target_params.keys():
             print(
-                "ERROR: Dataset 'number_of_profiling_traces' not specified. Please use set_number_of_profiling_traces method to specify it.")
+                "ERROR 6: Dataset 'number_of_profiling_traces' not specified. Please use set_number_of_profiling_traces method to specify it.")
             return
 
         if "number_of_attack_traces" not in self.target_params.keys():
-            print("ERROR: Dataset 'number_of_attack_traces' not specified. Please use set_number_of_attack_traces method to specify it.")
+            print("ERROR 7: Dataset 'number_of_attack_traces' not specified. Please use set_number_of_attack_traces method to specify it.")
             return
 
         # initialize configurations
@@ -670,7 +678,7 @@ class Aisy:
             self.sr_all_attack = []
             self.k_ps_all = []
             if self.target_params["number_of_attack_traces"] == self.key_rank_attack_traces:
-                print("ERROR: ensemble feature requires the 'number_of_attack_traces' >= 2 x key_rank_attack_traces.")
+                print("ERROR 8: ensemble feature requires the 'number_of_attack_traces' >= 2 x key_rank_attack_traces.")
                 return
         if grid_search is not None:
             self.grid_search_active = True
@@ -680,10 +688,12 @@ class Aisy:
             self.early_stopping_active = True
             self.early_stopping_metrics = early_stopping["metrics"]
             if self.target_params["number_of_attack_traces"] == self.key_rank_attack_traces:
-                print("ERROR: early stopping feature requires the 'number_of_attack_traces' >= 2 x key_rank_attack_traces.")
+                print("ERROR 9: early stopping feature requires the 'number_of_attack_traces' >= 2 x key_rank_attack_traces.")
                 return
         if confusion_matrix:
             self.confusion_matrix_active = True
+        if save_to_npz is not None:
+            self.save_to_npz = True
         self.compute_ge_active = compute_ge
 
         self.save_database = save_database
@@ -712,6 +722,8 @@ class Aisy:
             self.settings["early_stopping"] = early_stopping
         if callbacks is not None:
             self.settings["callbacks"] = callbacks
+        if save_to_npz is not None:
+            self.settings["save_to_npz"] = True
 
         if self.save_database:
             self.insert_new_analysis_in_database()
@@ -726,7 +738,7 @@ class Aisy:
                 self.target_params, self.leakage_model,
                 split_test_set=self.ensemble_active or self.early_stopping_active)
         else:
-            print("ERROR: Dataset format not supported.")
+            print("ERROR 10: Dataset format not supported.")
             return
 
         # normalize with z-score
@@ -735,20 +747,6 @@ class Aisy:
         if self.ensemble_active or self.early_stopping_active:
             self.apply_z_score_norm(X_validation)
         self.apply_z_score_norm(X_attack)
-
-        # for f in range(500000000, 800000000, 100000000):
-        #
-        #     Fs = 2e9
-        #     sample = len(X_profiling[0])
-        #     x = np.arange(sample)
-        #     y = np.sin(2 * np.pi * f * x / Fs)
-        #
-        #     X_profiling += y
-        #     X_attack += y
-
-        # import matplotlib.pyplot as plt
-        # plt.magnitude_spectrum(X_profiling[0], Fs=2e9)
-        # plt.show()
 
         x_profiling = X_profiling.astype('float32')
         x_validation = X_validation.astype('float32') if self.ensemble_active or self.early_stopping_active else None
@@ -814,6 +812,22 @@ class Aisy:
                 self.save_results()
                 if self.early_stopping_active:
                     self.save_early_stopping_results()
+            if self.save_to_npz:
+                np.savez("../resources/npz/{}.npz".format(save_to_npz[0]),
+                         metrics_profiling=self.metric_profiling,
+                         metrics_validation=self.metric_validation,
+                         metrics_attack=self.metric_attack,
+                         guessing_entropy=self.ge_attack,
+                         success_rate=self.sr_attack,
+                         model_weights=self.model.get_weights(),
+                         input_gradients_epoch=self.callback_input_gradients.grads_epoch() if self.visualization_active else None,
+                         input_gradients_sum=self.callback_input_gradients.grads() if self.visualization_active else None,
+                         settings=self.settings,
+                         hyperparameters=self.hyper_parameters,
+                         leakage_model=self.leakage_model,
+                         model_description=ScaKerasModels().keras_model_as_string(self.model_name), allow_pickle=True
+                         )
+
             backend.clear_session()
 
     def __save_metric_avg(self, metric, n_models, name):

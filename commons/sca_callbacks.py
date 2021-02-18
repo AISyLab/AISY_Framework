@@ -10,20 +10,32 @@ import os
 
 class EarlyStoppingCallback(Callback):
     def __init__(self, x_profiling, y_profiling, plaintexts_profiling,
+                 ciphertexts_profiling, key_profiling,
                  x_validation, y_validation, plaintexts_validation,
+                 ciphertexts_validation, key_validation,
                  x_attack, y_attack, plaintexts_attack,
+                 ciphertexts_attack, key_attack,
                  param, aes_leakage_model,
                  key_rank_executions, key_rank_report_interval, key_rank_attack_traces,
                  metrics=None, timestamp=None):
+        # profiling
         self.x_profiling = x_profiling
         self.y_profiling = y_profiling
         self.plaintexts_profiling = plaintexts_profiling
+        self.ciphertexts_profiling = ciphertexts_profiling
+        self.key_profiling = key_profiling
+        # validation
         self.x_validation = x_validation
         self.y_validation = y_validation
         self.plaintexts_validation = plaintexts_validation
+        self.ciphertexts_validation = ciphertexts_validation
+        self.key_validation = key_validation
+        # attack
         self.x_attack = x_attack
         self.y_attack = y_attack
         self.plaintexts_attack = plaintexts_attack
+        self.ciphertexts_attack = ciphertexts_attack
+        self.key_attack = key_attack
 
         self.param = param
         self.aes_leakage_model = aes_leakage_model
@@ -45,8 +57,11 @@ class EarlyStoppingCallback(Callback):
             for metric in self.metrics:
                 script = importlib.import_module("custom.custom_metrics.{}".format(self.metrics[metric]["class"]))
                 metric_value = script.run(self.x_profiling, self.y_profiling, self.plaintexts_profiling,
+                                          self.ciphertexts_profiling, self.key_profiling,
                                           self.x_validation, self.y_validation, self.plaintexts_validation,
+                                          self.ciphertexts_validation, self.key_validation,
                                           self.x_attack, self.y_attack, self.plaintexts_attack,
+                                          self.ciphertexts_attack, self.key_attack,
                                           self.param, self.aes_leakage_model,
                                           self.key_rank_executions, self.key_rank_report_interval, self.key_rank_attack_traces,
                                           self.model, self.metrics[metric]["parameters"])
