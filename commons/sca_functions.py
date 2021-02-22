@@ -46,7 +46,8 @@ class ScaFunctions:
         for key_byte_hypothesis in range(0, 256):
             key_h = bytearray.fromhex(param["key"])
             key_h[leakage_model["byte"]] = key_byte_hypothesis
-            labels_key_hypothesis[key_byte_hypothesis][:] = aes_intermediates_sr_ge(plaintext_attack, ciphertext_attack, key_h, leakage_model)
+            labels_key_hypothesis[key_byte_hypothesis][:] = aes_intermediates_sr_ge(plaintext_attack, ciphertext_attack, key_h,
+                                                                                    leakage_model)
 
         # ---------------------------------------------------------------------------------------------------------#
         # predict output probabilities for shuffled test or validation set
@@ -88,6 +89,33 @@ class ScaFunctions:
         success_rate = success_rate_sum / runs
 
         return guessing_entropy, success_rate, key_probabilities_key_ranks
+
+    def get_probability_ranks(self, x_attack, plaintext_attack, ciphertext_attack, key_rank_attack_traces, key_rank_executions,
+                              classes, leakage_model, param, model):
+
+        output_probabilities = model.predict(x_attack)
+
+        intermediates_key_hypothesis = np.zeros((256, key_rank_attack_traces))
+        for key_guess in range(256):
+            key_h = bytearray.fromhex(param["key"])
+            key_h[leakage_model["byte"]] = key_guess
+            intermediates_key_hypothesis[key_guess][:] = aes_intermediates_sr_ge(plaintext_attack, ciphertext_attack, key_h,
+                                                                                 leakage_model)
+
+        p = np.zeros((256, key_rank_attack_traces))
+
+        for key_guess in range(256):
+            for i in range(key_rank_attack_traces):
+                p[key_guess][i] = int(list(np.argsort(output_probabilities[i])[::-1]).index(intermediates_key_hypothesis[key_guess][i]))
+
+        probabilities_count = np.zeros((256, classes))
+
+        for key_guess in range(256):
+            for class_index in range(classes):
+                probabilities_count[key_guess][class_index] += np.count_nonzero(p[key_guess] == class_index)
+            probabilities_count[key_guess] /= key_rank_attack_traces
+
+        return probabilities_count
 
     def get_best_models(self, n_models, result_models_validation, n_traces):
 

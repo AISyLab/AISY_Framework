@@ -139,3 +139,18 @@ class ConfusionMatrix(Base):
 
     def __repr__(self):
         return "<ConfusionMatrix>"
+
+
+class ProbabilityRank(Base):
+    __tablename__ = 'probability_rank'
+    id = Column(Integer, primary_key=True)
+    ranks = Column(JSON)
+    classes = Column(Integer)
+    correct_key_byte = Column(Integer)
+    key_guess = Column(Integer)
+    key_byte = Column(Integer)
+    analysis_id = Column(Integer, ForeignKey('analysis.id'))
+    analysis = relationship("Analysis", cascade="all, delete")
+
+    def __repr__(self):
+        return "<ProbabilityRank>"

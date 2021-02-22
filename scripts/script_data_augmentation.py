@@ -1,4 +1,4 @@
-from neural_networks.neural_networks import *
+from custom.custom_models.neural_networks import *
 from commons.sca_aisy_aes import Aisy
 from custom.custom_data_augmentation.data_augmentation import *
 

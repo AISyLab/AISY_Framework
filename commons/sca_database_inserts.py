@@ -58,5 +58,10 @@ class ScaDatabaseInserts:
         new_insert = ConfusionMatrix(y_pred=y_pred, y_true=y_true, key_byte=key_byte, analysis_id=self.analysis_id)
         self.db.insert(new_insert)
 
+    def save_probability_rank(self, ranks, classes, correct_key_byte, key_guess, key_byte):
+        new_insert = ProbabilityRank(ranks=ranks, classes=classes, correct_key_byte=correct_key_byte, key_guess=key_guess,
+                                     key_byte=key_byte, analysis_id=self.analysis_id)
+        self.db.insert(new_insert)
+
     def custom_insert(self, new_insert):
         self.db.insert(new_insert)

@@ -1,10 +1,7 @@
-import numpy as np
 import pandas as pd
 import time
-import os
 import itertools
 import json
-from tensorflow.keras import backend
 from tensorflow.keras.utils import to_categorical
 from custom.custom_datasets.datasets import *
 from commons.sca_callbacks import *
@@ -13,8 +10,8 @@ from commons.sca_functions import ScaFunctions
 from commons.sca_database_inserts import ScaDatabaseInserts
 from commons.sca_load_datasets import ScaLoadDatasets
 from app import databases_root_folder, datasets_root_folder
-from neural_networks.neural_networks_grid_search import *
-from neural_networks.neural_networks_random_search import *
+from commons.neural_networks_grid_search import *
+from commons.neural_networks_random_search import *
 from termcolor import colored
 
 
@@ -49,6 +46,7 @@ class Aisy:
         self.ge_all_attack = None
         self.sr_all_attack = None
         self.k_ps_all = None
+        self.output_probabilities = None
         self.ge_best_model_validation = None
         self.ge_best_model_attack = None
         self.sr_best_model_validation = None
@@ -83,6 +81,7 @@ class Aisy:
         self.timestamp = 0
         self.save_database = True
         self.save_to_npz = False
+        self.probability_rank_plot = False
 
         self.z_score_mean = None
         self.z_score_std = None
@@ -609,7 +608,7 @@ class Aisy:
 
     def run(self, key_rank_executions=100, key_rank_report_interval=10, key_rank_attack_traces=1000, visualization=None,
             data_augmentation=None, ensemble=None, grid_search=None, random_search=None, early_stopping=None, confusion_matrix=False,
-            callbacks=None, save_database=True, compute_ge=True, save_to_npz=None):
+            callbacks=None, save_database=True, compute_ge=True, save_to_npz=None, probability_rank_plot=False):
 
         """
 
@@ -629,6 +628,7 @@ class Aisy:
         :param save_database: boolean variable setting database feature
         :param compute_ge: boolean variable setting guessing entropy feature
         :param save_to_npz: .npz file name to where results are saved (file results are placed in 'resources/npz' folder)
+        :param probability_rank_plot: create probability rank plot according to https://tches.iacr.org/index.php/TCHES/article/view/8686)
         :return: None
         """
 
@@ -694,6 +694,9 @@ class Aisy:
             self.confusion_matrix_active = True
         if save_to_npz is not None:
             self.save_to_npz = True
+        if probability_rank_plot:
+            self.probability_rank_plot = True
+            self.output_probabilities = None
         self.compute_ge_active = compute_ge
 
         self.save_database = save_database
@@ -827,6 +830,13 @@ class Aisy:
                          leakage_model=self.leakage_model,
                          model_description=ScaKerasModels().keras_model_as_string(self.model_name), allow_pickle=True
                          )
+            if self.probability_rank_plot:
+                rank_results = ScaFunctions().get_probability_ranks(x_attack, plaintext_attack, ciphertext_attack,
+                                                                    self.key_rank_attack_traces,
+                                                                    self.key_rank_executions, self.classes, self.leakage_model,
+                                                                    self.target_params, self.model)
+                self.__save_probability_ranks(rank_results)
+                self.save_probability_ranks_figure(rank_results)
 
             backend.clear_session()
 
@@ -842,6 +852,31 @@ class Aisy:
 
     def __save_sr(self, sr, metric):
         self.db_inserts.save_success_rate_json(pd.Series(sr).to_json(), self.leakage_model["byte"], self.key_rank_report_interval, metric)
+
+    def __save_probability_ranks(self, ranks):
+        for key_guess in range(256):
+            self.db_inserts.save_probability_rank(pd.Series(ranks[key_guess]).to_json(), self.classes, self.target_params["good_key"],
+                                                  key_guess, self.leakage_model["byte"])
+
+    def save_probability_ranks_figure(self, ranks):
+        my_dpi = 100
+        import matplotlib.pyplot as plt
+        plt.figure(figsize=(800 / my_dpi, 600 / my_dpi), dpi=my_dpi)
+
+        for kg in range(256):
+            if kg != self.target_params["good_key"]:
+                if kg == 0:
+                    plt.plot(np.arange(1, self.classes + 1), ranks[kg], color="#bdbdbd", label="Wrong Key Hypotheses")
+                else:
+                    plt.plot(np.arange(1, self.classes + 1), ranks[kg], color="#bdbdbd")
+        plt.plot(np.arange(1, self.classes + 1), ranks[self.target_params["good_key"]], label="Correct Key Hypothesis", color="purple")
+        plt.legend(loc='best', fontsize=13)
+        plt.xlabel("Class Probability Rank", fontsize=13)
+        plt.ylabel("Density", fontsize=13)
+        plt.grid(ls='--')
+        plt.xlim([1, self.classes])
+        timestamp = str(time.time()).replace(".", "")
+        plt.savefig("../resources/figures/probability_ranks_{}.png".format(timestamp), format="png")
 
     def set_hyper_parameters(self, ge):
         self.hyper_parameters.append({
@@ -984,11 +1019,14 @@ class Aisy:
     def compute_ge_and_sr(self, x_attack, plaintext_attack, ciphertext_attack,
                           key_rank_report_interval, key_rank_attack_traces, x_validation=None,
                           plaintext_validation=None, ciphertext_validation=None, early_stopping_metric_results=None):
-        self.ge_attack, self.sr_attack, _ = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model, self.target_params,
-                                                                     self.leakage_model,
-                                                                     x_attack, plaintext_attack, ciphertext_attack,
-                                                                     key_rank_report_interval,
-                                                                     key_rank_attack_traces)
+        self.ge_attack, self.sr_attack, kp_krs = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model, self.target_params,
+                                                                          self.leakage_model,
+                                                                          x_attack, plaintext_attack, ciphertext_attack,
+                                                                          key_rank_report_interval,
+                                                                          key_rank_attack_traces)
+        if self.probability_rank_plot:
+            self.output_probabilities = kp_krs
+
         if self.ensemble_active:
             ge_validation, sr_validation, kp_krs = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model,
                                                                             self.target_params, self.leakage_model, x_validation,
