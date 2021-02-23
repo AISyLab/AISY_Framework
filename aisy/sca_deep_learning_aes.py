@@ -4,18 +4,18 @@ import itertools
 import json
 from tensorflow.keras.utils import to_categorical
 from custom.custom_datasets.datasets import *
-from commons.sca_callbacks import *
-from commons.sca_keras_models import ScaKerasModels
-from commons.sca_functions import ScaFunctions
-from commons.sca_database_inserts import ScaDatabaseInserts
-from commons.sca_load_datasets import ScaLoadDatasets
+from aisy.sca_callbacks import *
+from aisy.sca_keras_models import ScaKerasModels
+from aisy.sca_functions import ScaFunctions
+from aisy.sca_database_inserts import ScaDatabaseInserts
+from aisy.sca_load_datasets import ScaLoadDatasets
 from app import databases_root_folder, datasets_root_folder
-from commons.neural_networks_grid_search import *
-from commons.neural_networks_random_search import *
+from aisy.neural_networks_grid_search import *
+from aisy.neural_networks_random_search import *
 from termcolor import colored
 
 
-class Aisy:
+class AisyAes:
 
     def __init__(self):
 
@@ -369,9 +369,9 @@ class Aisy:
                 if isinstance(self.callback_early_stopping.get_metric_results()[early_stopping_metric][0], list):
                     for i in range(len(self.callback_early_stopping.get_metric_results()[early_stopping_metric][0])):
                         os.remove(
-                            "../resources/early_stopping_models/best_model_{}_{}_{}.h5".format(early_stopping_metric, self.timestamp, i))
+                            "../resources/models/best_model_{}_{}_{}.h5".format(early_stopping_metric, self.timestamp, i))
                 else:
-                    os.remove("../resources/early_stopping_models/best_model_{}_{}.h5".format(early_stopping_metric, self.timestamp))
+                    os.remove("../resources/models/best_model_{}_{}.h5".format(early_stopping_metric, self.timestamp))
             self.get_metrics_results(history, search_index, metric_results=self.callback_early_stopping.get_metric_results())
         else:
             self.get_metrics_results(history, search_index)
@@ -1045,8 +1045,8 @@ class Aisy:
             for early_stopping_metric in self.early_stopping_metrics:
                 if isinstance(early_stopping_metric_results[early_stopping_metric][0], list):
                     for i in range(len(early_stopping_metric_results[early_stopping_metric][0])):
-                        print("../resources/early_stopping_models/best_model_{}_{}_{}.h5".format(early_stopping_metric, self.timestamp, i))
-                        self.model.load_weights("../resources/early_stopping_models/best_model_{}_{}_{}.h5".format(early_stopping_metric,
+                        print("../resources/models/best_model_{}_{}_{}.h5".format(early_stopping_metric, self.timestamp, i))
+                        self.model.load_weights("../resources/models/best_model_{}_{}_{}.h5".format(early_stopping_metric,
                                                                                                                    self.timestamp, i))
                         ge_attack, sr_attack, _ = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model, self.target_params,
                                                                            self.leakage_model,
@@ -1066,8 +1066,8 @@ class Aisy:
                             }
                         )
                 else:
-                    print("../resources/early_stopping_models/best_model_{}_{}.h5".format(early_stopping_metric, self.timestamp))
-                    self.model.load_weights("../resources/early_stopping_models/best_model_{}_{}.h5".format(early_stopping_metric,
+                    print("../resources/models/best_model_{}_{}.h5".format(early_stopping_metric, self.timestamp))
+                    self.model.load_weights("../resources/models/best_model_{}_{}.h5".format(early_stopping_metric,
                                                                                                             self.timestamp))
                     ge_attack, sr_attack, _ = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model,
                                                                        self.target_params, self.leakage_model,

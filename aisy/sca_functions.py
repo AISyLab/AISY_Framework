@@ -1,7 +1,7 @@
 import numpy as np
 import random
 from sklearn.utils import shuffle
-from commons.sca_aes_create_intermediates import *
+from aisy.sca_aes_create_intermediates import *
 
 
 class ConditionalAveragerAes:

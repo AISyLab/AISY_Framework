@@ -1,9 +1,9 @@
 from flask import Flask, render_template
-from commons.sca_database import ScaDatabase
-from commons.sca_generate_script import generate_script
-from commons.sca_views import ScaViews
-from commons.sca_tables import *
-from commons.plotly.PlotlyPlots import PlotlyPlots
+from aisy.sca_database import ScaDatabase
+from aisy.sca_generate_script import generate_script
+from aisy.sca_views import ScaViews
+from aisy.sca_tables import *
+from aisy.plotly.PlotlyPlots import PlotlyPlots
 from custom.custom_datasets.datasets import *
 import os
 import time

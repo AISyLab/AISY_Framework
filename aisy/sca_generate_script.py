@@ -1,6 +1,6 @@
-from commons.sca_database import ScaDatabase
-from commons.sca_tables import KeyRank
-from commons.sca_tables import Analysis, NeuralNetwork, LeakageModel, HyperParameter, HyperParameterSearch
+from aisy.sca_database import ScaDatabase
+from aisy.sca_tables import KeyRank
+from aisy.sca_tables import Analysis, NeuralNetwork, LeakageModel, HyperParameter, HyperParameterSearch
 
 
 def generate_script(script_filename, databases_root_folder, table_name, analysis_id):

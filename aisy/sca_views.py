@@ -1,5 +1,5 @@
-from commons.sca_tables import *
-from commons.plotly.PlotlyPlots import PlotlyPlots
+from aisy.sca_tables import *
+from aisy.plotly.PlotlyPlots import PlotlyPlots
 import numpy as np
 
 

@@ -1,5 +1,5 @@
 from custom.custom_models.neural_networks import *
-from commons.sca_aisy_aes import Aisy
+from aisy.sca_deep_learning_aes import AisyAes
 
 
 def mlp(classes, number_of_samples, neuron, layer, activation, learning_rate):
@@ -17,7 +17,7 @@ def mlp(classes, number_of_samples, neuron, layer, activation, learning_rate):
     return model
 
 
-aisy = Aisy()
+aisy = AisyAes()
 aisy.set_dataset("ascad-variable.h5")
 aisy.set_database_name("database_ascad.sqlite")
 aisy.set_aes_leakage_model(leakage_model="HW", byte=2)

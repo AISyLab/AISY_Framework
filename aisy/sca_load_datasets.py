@@ -1,6 +1,6 @@
 import numpy as np
 import h5py
-from commons.sca_aes_create_intermediates import *
+from aisy.sca_aes_create_intermediates import *
 
 
 class ScaLoadDatasets:

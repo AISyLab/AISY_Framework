@@ -1,8 +1,7 @@
 from custom.custom_models.neural_networks import *
-from commons.sca_aisy_aes import Aisy
+from aisy.sca_deep_learning_aes import AisyAes
 
-aisy = Aisy()
-aisy.set_datasets_root_folder("D:/traces/")
+aisy = AisyAes()
 aisy.set_dataset("ascad-variable.h5")
 aisy.set_database_name("database_ascad_early_stopping.sqlite")
 aisy.set_aes_leakage_model(leakage_model="HW", byte=2)

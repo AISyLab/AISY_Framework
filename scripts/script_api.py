@@ -1,5 +1,5 @@
 from api.api import API
-from commons.sca_database import *
+from aisy.sca_database import *
 
 # set analysis id (this can be retrieved from web application)
 analysis_id = 1

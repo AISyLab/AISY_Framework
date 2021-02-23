@@ -1,6 +1,6 @@
-from commons.sca_database import ScaDatabase
-from commons.sca_tables import *
-import commons.sca_tables as tables
+from aisy.sca_database import ScaDatabase
+from aisy.sca_tables import *
+import aisy.sca_tables as tables
 import custom.custom_tables.tables as custom_tables
 
 

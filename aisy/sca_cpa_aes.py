@@ -1,6 +1,6 @@
 from custom.custom_datasets.datasets import *
-from commons.sca_functions import ScaFunctions
-from commons.sca_load_datasets import ScaLoadDatasets
+from aisy.sca_functions import ScaFunctions
+from aisy.sca_load_datasets import ScaLoadDatasets
 from app import databases_root_folder, datasets_root_folder
 
 

@@ -1,4 +1,4 @@
-from commons.sca_tables import *
+from aisy.sca_tables import *
 
 
 class API:

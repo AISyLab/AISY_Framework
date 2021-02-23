@@ -92,29 +92,29 @@ class EarlyStoppingCallback(Callback):
                                     self.metric_results[metric][epoch][index] < ref_value_epoch_list[index] and self.metrics[metric][
                                 "direction"] == "min"):
                                 os.remove(
-                                    "../resources/early_stopping_models/best_model_{}_{}_{}.h5".format(metric, self.timestamp, index))
+                                    "../resources/models/best_model_{}_{}_{}.h5".format(metric, self.timestamp, index))
                                 self.model.save_weights(
-                                    "../resources/early_stopping_models/best_model_{}_{}_{}.h5".format(metric, self.timestamp, index))
+                                    "../resources/models/best_model_{}_{}_{}.h5".format(metric, self.timestamp, index))
                                 print(colored(
                                     "\nmodel saved {} = {} at epoch {}\n".format(metric, self.metric_results[metric][epoch][index], epoch),
                                     "blue"))
                     else:
                         if (self.metric_results[metric][epoch] > ref_metric and self.metrics[metric]["direction"] == "max") or (
                                 self.metric_results[metric][epoch] < ref_metric and self.metrics[metric]["direction"] == "min"):
-                            os.remove("../resources/early_stopping_models/best_model_{}_{}.h5".format(metric, self.timestamp))
-                            self.model.save_weights("../resources/early_stopping_models/best_model_{}_{}.h5".format(metric, self.timestamp))
+                            os.remove("../resources/models/best_model_{}_{}.h5".format(metric, self.timestamp))
+                            self.model.save_weights("../resources/models/best_model_{}_{}.h5".format(metric, self.timestamp))
                             print(colored("\nmodel saved {} = {} at epoch {}\n".format(metric, self.metric_results[metric][epoch], epoch),
                                           "blue"))
                 else:
                     if isinstance(metric_value, list):
                         for index, current_epoch_value in enumerate(self.metric_results[metric][epoch]):
                             self.model.save_weights(
-                                "../resources/early_stopping_models/best_model_{}_{}_{}.h5".format(metric, self.timestamp, index))
+                                "../resources/models/best_model_{}_{}_{}.h5".format(metric, self.timestamp, index))
                             print(colored(
                                 "\nmodel saved {} = {} at epoch {}\n".format(metric, self.metric_results[metric][epoch][index], epoch),
                                 "blue"))
                     else:
-                        self.model.save_weights("../resources/early_stopping_models/best_model_{}_{}.h5".format(metric, self.timestamp))
+                        self.model.save_weights("../resources/models/best_model_{}_{}.h5".format(metric, self.timestamp))
                         print(colored("\nmodel saved {} = {} at epoch {}\n".format(metric, self.metric_results[metric][epoch], epoch),
                                       "blue"))
 

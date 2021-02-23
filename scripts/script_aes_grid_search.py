@@ -1,6 +1,6 @@
-from commons.sca_aisy_aes import Aisy
+from aisy.sca_deep_learning_aes import AisyAes
 
-aisy = Aisy()
+aisy = AisyAes()
 # aisy.set_datasets_root_folder("D:/traces/")
 aisy.set_dataset("ascad-variable.h5")
 aisy.set_database_name("database_ascad.sqlite")
