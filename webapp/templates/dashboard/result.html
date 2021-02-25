@@ -55,12 +55,7 @@
                         <!-- Card Body -->
                         <div class="card-body">
                             {% for hyper_parameter in training_hyper_parameters[0] %}
-                                <div class="row">
-                                    <div class="col-xl-12 col-md-12 mb-4">
-                                        <h5>Hyper-Parameters for Model {{ loop.index }}</h5>
-                                    </div>
-                                </div>
-                                <div class="row">
+                                 <div class="row">
                                     {% for key, value in hyper_parameter.items() %}
                                         <div class="col-xl-2 col-md-6 mb-4">
                                             <div class="card border-left-dark shadow h-100 py-2">

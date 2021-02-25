@@ -90,10 +90,11 @@ class ScaFunctions:
 
         return guessing_entropy, success_rate, key_probabilities_key_ranks
 
-    def get_probability_ranks(self, x_attack, plaintext_attack, ciphertext_attack, key_rank_attack_traces, key_rank_executions,
-                              classes, leakage_model, param, model):
+    def get_probability_ranks(self, x_attack, plaintext_attack, ciphertext_attack, key_rank_attack_traces, classes, leakage_model, param,
+                              model, output_probabilities=None):
 
-        output_probabilities = model.predict(x_attack)
+        if output_probabilities is None:
+            output_probabilities = model.predict(x_attack)
 
         intermediates_key_hypothesis = np.zeros((256, key_rank_attack_traces))
         for key_guess in range(256):
@@ -115,7 +116,7 @@ class ScaFunctions:
                 probabilities_count[key_guess][class_index] += np.count_nonzero(p[key_guess] == class_index)
             probabilities_count[key_guess] /= key_rank_attack_traces
 
-        return probabilities_count
+        return probabilities_count, output_probabilities
 
     def get_best_models(self, n_models, result_models_validation, n_traces):
 

@@ -1,14 +1,14 @@
 from aisy.sca_database import ScaDatabase
-from aisy.sca_tables import KeyRank
-from aisy.sca_tables import Analysis, NeuralNetwork, LeakageModel, HyperParameter, HyperParameterSearch
+from aisy.sca_tables import *
 
 
 def generate_script(script_filename, databases_root_folder, table_name, analysis_id):
     script_py_file = open("scripts/{}_{}.py".format(script_filename, table_name.replace(".sqlite", "")), "w+")
 
-    file_imports = open("commons/generate/script_imports", 'r')
-
-    script_py_file.write(file_imports.read())
+    script_py_file.write("from tensorflow.keras.optimizers import *\n")
+    script_py_file.write("from tensorflow.keras.layers import *\n")
+    script_py_file.write("from tensorflow.keras.models import *\n")
+    script_py_file.write("from aisy.sca_deep_learning_aes import AisyAes\n")
 
     db = ScaDatabase(databases_root_folder + table_name)
 
@@ -19,7 +19,6 @@ def generate_script(script_filename, databases_root_folder, table_name, analysis
     hyper_parameters = db.select_all_from_analysis(HyperParameter, analysis_id)
     hyper_parameters_single = hyper_parameters[0].hyper_parameters[0]
 
-    hyper_parameters_ranges = None
     hyper_parameter_search = None
     if len(hyper_parameters) > 1:
         hyper_parameter_search = db.select_from_analysis(HyperParameterSearch, analysis.id)
@@ -27,7 +26,7 @@ def generate_script(script_filename, databases_root_folder, table_name, analysis
     leakage_models = db.select_from_analysis(LeakageModel, analysis_id)
     leakage_model_parameters = leakage_models.leakage_model[0]
 
-    script_py_file.write('\naisy = Aisy()')
+    script_py_file.write('\naisy = AisyAes()')
     script_py_file.write('\naisy.set_dataset("{}")'.format(analysis.dataset))
     script_py_file.write('\naisy.set_database_name("{}")'.format(table_name))
     script_py_file.write('\naisy.set_aes_leakage_model(')

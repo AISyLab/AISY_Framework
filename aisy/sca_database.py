@@ -34,7 +34,7 @@ class ScaDatabase:
         metric_names = self.session.query(table_class.metric).filter_by(analysis_id=analysis_id).distinct().all()
         return [value for value, in metric_names]
 
-    def select_key_rank_metrics(self, table_class, analysis_id):
+    def select_result_metrics(self, table_class, analysis_id):
         metric_rows = self.session.query(table_class.metric).filter_by(analysis_id=analysis_id).distinct().all()
         metrics = [value for value, in metric_rows]
         return metrics

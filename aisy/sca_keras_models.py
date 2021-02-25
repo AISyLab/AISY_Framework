@@ -9,7 +9,7 @@ class ScaKerasModels:
     def keras_model_as_string(self, keras_method_name):
 
         dir_name = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        file_path = os.path.join(dir_name, 'neural_networks')
+        file_path = os.path.join(dir_name, 'custom\\custom_models')
         filename = file_path + "\\neural_networks.py"
 
         file_contents = ""

@@ -112,7 +112,8 @@ def table():
             for analysis in analysis_all:
                 if not analysis.deleted:
                     localtimezone = pytz.timezone(os.getenv("TIME_ZONE"))
-                    analysis_datetime = datetime.strptime(str(analysis.datetime), "%Y-%m-%d %H:%M:%S.%f").astimezone(localtimezone).__format__(
+                    analysis_datetime = datetime.strptime(str(analysis.datetime), "%Y-%m-%d %H:%M:%S.%f").astimezone(
+                        localtimezone).__format__(
                         "%b %d, %Y %H:%M:%S")
 
                     final_key_ranks = db.select_final_key_rank_json_from_analysis(KeyRank, analysis.id)
@@ -172,6 +173,9 @@ def search(table_name):
 def result(analysis_id, table_name):
     db = ScaDatabase(databases_root_folder + table_name)
 
+    # get neural network information from database
+    analysis = db.select_analysis(Analysis, analysis_id)
+
     sca_views = ScaViews(analysis_id, db)
 
     all_metric_plots = sca_views.metric_plots()
@@ -180,13 +184,16 @@ def result(analysis_id, table_name):
     dash_app_accuracy.layout = html.Div(children=[all_accuracy_plots])
     all_loss_plots = sca_views.loss_plots()
     dash_app_loss.layout = html.Div(children=[all_loss_plots])
-    all_key_rank_plots = sca_views.key_rank_plots()
+    if "ensemble" in analysis.settings:
+        all_key_rank_plots = sca_views.ensemble_plots_key_rank()
+    else:
+        all_key_rank_plots = sca_views.key_rank_plots()
     dash_app_key_ranks.layout = html.Div(children=[all_key_rank_plots])
-    all_success_rate_plots = sca_views.success_rate_plots()
+    if "ensemble" in analysis.settings:
+        all_success_rate_plots = sca_views.ensemble_plots_success_rate()
+    else:
+        all_success_rate_plots = sca_views.success_rate_plots()
     dash_app_success_rates.layout = html.Div(children=[all_success_rate_plots])
-
-    # get neural network information from database
-    analysis = db.select_analysis(Analysis, analysis_id)
 
     # get neural network information from database
     neural_network_model = db.select_from_analysis(NeuralNetwork, analysis_id)
@@ -268,6 +275,9 @@ def gen_plot(analysis_id, table_name, metric):
             result_key_byte.append(db.select_values_from_metric(Metric, metric, analysis_id)[0])
     my_dpi = 100
     plt.figure(figsize=(800 / my_dpi, 600 / my_dpi), dpi=my_dpi)
+    dir_analysis_id = "{}".format(analysis_id)
+    if not os.path.exists(dir_analysis_id):
+        os.makedirs(dir_analysis_id)
     if metric == "Guessing_Entropy" or metric == "Success_Rate":
         for res in result_key_byte:
             plt.plot(np.arange(res['report_interval'], (len(res['values']) + 1) * res['report_interval'], res['report_interval']),
@@ -281,7 +291,8 @@ def gen_plot(analysis_id, table_name, metric):
             else:
                 plt.xlabel("Epochs", fontsize=13)
             plt.grid(ls='--')
-        plt.savefig("resources/{}_{}_{}.png".format(metric, analysis_id, table_name.replace(".sqlite", "")), format="png")
+        plt.savefig("resources/figures/{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")),
+                    format="png")
     else:
         for res in result_key_byte:
             plt.plot(np.arange(1, len(res['values']) + 1, 1), res['values'], label=res['metric'])
@@ -290,7 +301,8 @@ def gen_plot(analysis_id, table_name, metric):
             plt.ylabel(metric.replace("_", " "), fontsize=13)
             plt.xlabel("Epochs", fontsize=13)
             plt.grid(ls='--')
-        plt.savefig("resources/{}_{}_{}.png".format(metric, analysis_id, table_name.replace(".sqlite", "")), format="png")
+        plt.savefig("resources/figures/{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")),
+                    format="png")
 
     return "ok"
 

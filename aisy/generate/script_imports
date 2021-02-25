@@ -1,2 +1,0 @@
-from neural_networks.neural_networks import *
-from aisy.sca_aisy_aes import Aisy

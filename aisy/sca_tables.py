@@ -148,6 +148,7 @@ class ProbabilityRank(Base):
     classes = Column(Integer)
     correct_key_byte = Column(Integer)
     key_guess = Column(Integer)
+    title = Column(String)
     key_byte = Column(Integer)
     analysis_id = Column(Integer, ForeignKey('analysis.id'))
     analysis = relationship("Analysis", cascade="all, delete")
