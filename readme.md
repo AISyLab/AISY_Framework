@@ -5,7 +5,9 @@ This AISY Framework was developed by AISYLab from TU Delft.
 
 Contributors: Guilherme Perin, Lichao Wu and Stjepan Picek.
 
-Documentation page: https://aisylab.github.io/AISY_docs/
+### Documentation
+
+See our documentation page: https://aisylab.github.io/AISY_docs/
 
 ### Main Features
 
