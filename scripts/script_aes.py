@@ -1,5 +1,5 @@
-from custom.custom_models.neural_networks import *
-from aisy.sca_deep_learning_aes import AisyAes
+from aisy import *
+from custom import *
 
 aisy = AisyAes()
 aisy.set_database_name("database_ascad.sqlite")

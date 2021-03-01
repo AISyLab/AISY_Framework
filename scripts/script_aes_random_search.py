@@ -1,5 +1,4 @@
 from aisy.sca_deep_learning_aes import AisyAes
-from tensorflow.keras.optimizers import *
 
 aisy = AisyAes()
 aisy.set_dataset("ascad-variable.h5")
