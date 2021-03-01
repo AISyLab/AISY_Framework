@@ -687,6 +687,11 @@ class AisyAes:
         :return: None
         """
 
+        for folder in ["databases", "figures", "models", "npz"]:
+            dir_resources_id = "resources/{}/".format(folder)
+            if not os.path.exists(dir_resources_id):
+                os.makedirs(dir_resources_id)
+
         if self.model is None and grid_search is None and random_search is None:
             print("ERROR 1: neural network model is not defined.")
             return
