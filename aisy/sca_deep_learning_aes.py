@@ -688,7 +688,7 @@ class AisyAes:
         """
 
         for folder in ["databases", "figures", "models", "npz"]:
-            dir_resources_id = "resources/{}/".format(folder)
+            dir_resources_id = "../resources/{}/".format(folder)
             if not os.path.exists(dir_resources_id):
                 os.makedirs(dir_resources_id)
 

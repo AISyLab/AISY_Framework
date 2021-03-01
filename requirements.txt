@@ -13,3 +13,6 @@ hiplot
 dash
 h5py
 termcolor
+pytz
+sklearn
+scipy
