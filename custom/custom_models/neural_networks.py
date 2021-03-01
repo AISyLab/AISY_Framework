@@ -5,7 +5,7 @@ from tensorflow.keras import backend
 
 
 def cnn(classes, number_of_samples):
-    model = Sequential()
+    model = Sequential(name="basic_cnn")
     model.add(Conv1D(filters=8, kernel_size=20, strides=1, activation='relu', padding='valid', input_shape=(number_of_samples, 1)))
     model.add(Conv1D(filters=8, kernel_size=10, strides=1, activation='relu', padding='valid', input_shape=(number_of_samples, 1)))
     # model.add(BatchNormalization())
@@ -22,7 +22,7 @@ def cnn(classes, number_of_samples):
 
 
 def mlp(classes, number_of_samples):
-    model = Sequential()
+    model = Sequential(name="basic_mlp")
     model.add(Dense(200, activation='selu', input_shape=(number_of_samples,)))
     model.add(Dense(200, activation='selu'))
     model.add(Dense(200, activation='selu'))

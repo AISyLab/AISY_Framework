@@ -37,7 +37,6 @@ class ScaFunctions:
         nt_interval = int(key_rank_attack_traces / key_rank_report_interval)
         key_ranking_sum = np.zeros(nt_interval)
         success_rate_sum = np.zeros(nt_interval)
-        key_probabilities_key_ranks = np.zeros((runs, nt, 256))
 
         # ---------------------------------------------------------------------------------------------------------#
         # compute labels for key hypothesis
@@ -70,7 +69,6 @@ class ScaFunctions:
             for index in range(key_rank_attack_traces):
 
                 key_probabilities += np.log(probabilities_kg_all_traces_shuffled[index] + 1e-36)
-                key_probabilities_key_ranks[run][index] = probabilities_kg_all_traces_shuffled[index]
                 key_probabilities_sorted = np.argsort(key_probabilities)[::-1]
 
                 if (index + 1) % key_rank_report_interval == 0:
@@ -88,7 +86,7 @@ class ScaFunctions:
         guessing_entropy = key_ranking_sum / runs
         success_rate = success_rate_sum / runs
 
-        return guessing_entropy, success_rate, key_probabilities_key_ranks
+        return guessing_entropy, success_rate, output_probabilities
 
     def get_probability_ranks(self, x_attack, plaintext_attack, ciphertext_attack, key_rank_attack_traces, classes, leakage_model, param,
                               model, output_probabilities=None):

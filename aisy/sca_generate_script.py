@@ -62,6 +62,8 @@ def generate_script(script_filename, databases_root_folder, table_name, analysis
     script_py_file.write('\n    key_rank_attack_traces={},'.format(analysis.settings["key_rank_attack_traces"]))
     if "early_stopping" in analysis.settings:
         script_py_file.write('\n    early_stopping=early_stopping,')
+    if "ensemble" in analysis.settings:
+        script_py_file.write('\n    ensemble=[{}],'.format(analysis.settings["ensemble"]))
     if len(hyper_parameters) == 1:
         script_py_file.write('\n)\n')
     else:

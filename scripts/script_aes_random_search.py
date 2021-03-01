@@ -1,12 +1,12 @@
 from aisy.sca_deep_learning_aes import AisyAes
+from tensorflow.keras.optimizers import *
 
 aisy = AisyAes()
-# aisy.set_datasets_root_folder("D:/traces/")
 aisy.set_dataset("ascad-variable.h5")
 aisy.set_database_name("database_ascad.sqlite")
 aisy.set_aes_leakage_model(leakage_model="HW", byte=2)
-aisy.set_number_of_profiling_traces(50000)
-aisy.set_number_of_attack_traces(1000)
+aisy.set_number_of_profiling_traces(100000)
+aisy.set_number_of_attack_traces(2000)
 aisy.set_batch_size(400)
 aisy.set_epochs(20)
 
@@ -17,30 +17,33 @@ random_search = {
         'conv_layers': {"min": 1, "max": 2, "step": 1},
         'kernel_1': {"min": 2, "max": 8, "step": 1},
         'kernel_2': {"min": 2, "max": 8, "step": 1},
-        'stride_1': {"min": 1, "max": 2, "step": 1},
-        'stride_2': {"min": 1, "max": 2, "step": 1},
-        'filters_1': {"min": 8, "max": 8, "step": 8},
-        'filters_2': {"min": 16, "max": 16, "step": 16},
+        'stride_1': {"min": 5, "max": 10, "step": 5},
+        'stride_2': {"min": 5, "max": 10, "step": 5},
+        'filters_1': {"min": 8, "max": 32, "step": 4},
+        'filters_2': {"min": 8, "max": 32, "step": 4},
         'pooling_type_1': ["Average", "Max"],
         'pooling_type_2': ["Average", "Max"],
-        'pooling_size_1': {"min": 2, "max": 2, "step": 1},
-        'pooling_size_2': {"min": 2, "max": 2, "step": 1},
-        'pooling_stride_1': {"min": 2, "max": 2, "step": 1},
-        'pooling_stride_2': {"min": 2, "max": 2, "step": 1},
-        'neurons': {"min": 10, "max": 1000, "step": 10},
-        'layers': {"min": 1, "max": 10, "step": 1},
-        'learning_rate': [0.001, 0.005, 0.0001, 0.0005, 0.00001, 0.00005],
+        'pooling_size_1': {"min": 1, "max": 1, "step": 1},
+        'pooling_size_2': {"min": 1, "max": 1, "step": 1},
+        'pooling_stride_1': {"min": 1, "max": 1, "step": 1},
+        'pooling_stride_2': {"min": 1, "max": 1, "step": 1},
+        'neurons': {"min": 100, "max": 1000, "step": 100},
+        'layers': {"min": 2, "max": 3, "step": 1},
+        'learning_rate': [0.001, 0.0009, 0.0008, 0.0007, 0.0006, 0.0005, 0.0004, 0.0003, 0.0002, 0.0001],
         'activation': ["relu", "selu", "elu", "tanh"],
-        'epochs': {"min": 5, "max": 15, "step": 1},
-        'mini_batch': {"min": 100, "max": 2000, "step": 100},
+        'epochs': {"min": 5, "max": 5, "step": 1},
+        'mini_batch': {"min": 100, "max": 1000, "step": 100},
+        'optimizer': ["Adam", "RMSprop", "Adagrad", "Adadelta", "SGD"]
     },
     "metric": "guessing_entropy",
-    "stop_condition": True,
+    "stop_condition": False,
     "stop_value": 1.0,
-    "max_trials": 8,
+    "max_trials": 10,
     "train_after_search": True
 }
 
 aisy.run(
-    random_search=random_search
+    random_search=random_search,
+    ensemble=[5],
+    key_rank_attack_traces=500
 )

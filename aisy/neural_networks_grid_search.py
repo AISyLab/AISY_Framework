@@ -11,12 +11,14 @@ def mlp_grid_search(classes, number_of_samples, params, best_model=False):
     layers = params["layers"] if "layers" in params else 5
     activation = params["activation"] if "activation" in params else "relu"
     learning_rate = params["learning_rate"] if "learning_rate" in params else 0.001
+    optimizer = params["optimizer"] if "optimizer" in params else "Adam"
 
     hp = {
         'neurons': neurons,
         'layers': layers,
         'activation': activation,
-        'learning_rate': learning_rate
+        'learning_rate': learning_rate,
+        'optimizer': optimizer
     }
 
     model = Sequential()
@@ -25,8 +27,7 @@ def mlp_grid_search(classes, number_of_samples, params, best_model=False):
         model.add(Dense(neurons, activation=activation))
     model.add(Dense(classes, activation='softmax'))
     model.summary()
-    optimizer = Adam(lr=learning_rate)
-    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    model.compile(loss='categorical_crossentropy', optimizer=get_optimizer(optimizer, learning_rate), metrics=['accuracy'])
     return model, hp
 
 
@@ -59,6 +60,7 @@ def cnn_grid_search(classes, number_of_samples, params, best_model=False):
     layers = params["layers"] if "layers" in params else 5
     activation = params["activation"] if "activation" in params else "relu"
     learning_rate = params["learning_rate"] if "learning_rate" in params else 0.001
+    optimizer = params["optimizer"] if "optimizer" in params else "Adam"
 
     hp = {'conv_layers': conv_layers}
     for conv_layer in range(1, conv_layers + 1):
@@ -72,6 +74,7 @@ def cnn_grid_search(classes, number_of_samples, params, best_model=False):
     hp["layers"] = layers
     hp["activation"] = activation
     hp["learning_rate"] = learning_rate
+    hp["optimizer"] = optimizer
 
     model = Sequential()
     for conv_layer in range(1, conv_layers + 1):
@@ -90,6 +93,20 @@ def cnn_grid_search(classes, number_of_samples, params, best_model=False):
         model.add(Dense(neurons, activation=activation))
     model.add(Dense(classes, activation='softmax'))
     model.summary()
-    optimizer = Adam(lr=learning_rate)
-    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    model.compile(loss='categorical_crossentropy', optimizer=get_optimizer(optimizer, learning_rate), metrics=['accuracy'])
     return model, hp
+
+
+def get_optimizer(optimizer, learning_rate):
+    if optimizer == "Adam":
+        return Adam(lr=learning_rate)
+    elif optimizer == "RMSprop":
+        return RMSprop(lr=learning_rate)
+    elif optimizer == "Adadelta":
+        return Adadelta(lr=learning_rate)
+    elif optimizer == "Adagrad":
+        return Adagrad(lr=learning_rate)
+    elif optimizer == "SGD":
+        return SGD(lr=learning_rate, momentum=0.9, nesterov=True)
+    else:
+        return Adam(lr=learning_rate)

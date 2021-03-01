@@ -9,10 +9,12 @@ from aisy.sca_keras_models import ScaKerasModels
 from aisy.sca_functions import ScaFunctions
 from aisy.sca_database_inserts import ScaDatabaseInserts
 from aisy.sca_load_datasets import ScaLoadDatasets
+from aisy.sca_aes_create_intermediates import *
 from app import databases_root_folder, datasets_root_folder
 from aisy.neural_networks_grid_search import *
 from aisy.neural_networks_random_search import *
 from termcolor import colored
+from sklearn.utils import shuffle
 
 
 class AisyAes:
@@ -37,6 +39,8 @@ class AisyAes:
 
         self.ge_attack = None
         self.sr_attack = None
+        self.ge_validation = None
+        self.sr_validation = None
         self.metric_profiling = []
         self.metric_validation = []
         self.metric_attack = []
@@ -45,7 +49,7 @@ class AisyAes:
         self.sr_all_validation = None
         self.ge_all_attack = None
         self.sr_all_attack = None
-        self.k_ps_all = None
+        self.output_probabilities_all_models = None
         self.output_probabilities = None
         self.ge_best_model_validation = None
         self.ge_best_model_attack = None
@@ -246,6 +250,9 @@ class AisyAes:
     def get_model(self):
         return self.model
 
+    def set_model_weights(self, weights):
+        self.model.set_weights(weights)
+
     def get_db_inserts(self):
         return self.db_inserts
 
@@ -285,14 +292,14 @@ class AisyAes:
         input_layer_shape = self.model.get_layer(index=0).input_shape
         if len(input_layer_shape) == 3:
             x_profiling_reshaped = x_profiling.reshape((x_profiling.shape[0], x_profiling.shape[1], 1))
-            if self.early_stopping_active:
+            if self.early_stopping_active or self.ensemble_active or self.grid_search_active or self.random_search_active:
                 x_validation_reshaped = x_validation.reshape((x_validation.shape[0], x_validation.shape[1], 1))
             else:
                 x_validation_reshaped = None
             x_attack_reshaped = x_attack.reshape((x_attack.shape[0], x_attack.shape[1], 1))
         else:
             x_profiling_reshaped = x_profiling
-            if self.early_stopping_active:
+            if self.early_stopping_active or self.ensemble_active or self.grid_search_active or self.random_search_active:
                 x_validation_reshaped = x_validation
             else:
                 x_validation_reshaped = None
@@ -321,18 +328,20 @@ class AisyAes:
             self.add_callback(self.callback_confusion_matrix)
         if custom_callbacks is not None:
             for custom_callback in custom_callbacks:
-                print(custom_callback['parameters'])
-                custom_callback_obj = custom_callback['class'](x_profiling_reshaped, y_profiling, plaintext_profiling,
-                                                               ciphertext_profiling, key_profiling,
-                                                               x_validation_reshaped, y_validation, plaintext_validation,
-                                                               ciphertext_validation, key_validation,
-                                                               x_attack_reshaped, y_attack, plaintext_attack,
-                                                               ciphertext_attack, key_attack,
-                                                               self.target_params, self.leakage_model, self.key_rank_executions,
-                                                               key_rank_report_interval, key_rank_attack_traces,
-                                                               custom_callback['parameters'])
+                module_name = importlib.import_module("custom.custom_callbacks.callbacks")
+                custom_callback_class = getattr(module_name, custom_callback['class'])
+                # custom_callback_class = importlib.import_module("custom.custom_callbacks.callbacks.{}".format(custom_callback['class']))
+                custom_callback_obj = custom_callback_class(x_profiling_reshaped, y_profiling, plaintext_profiling,
+                                                            ciphertext_profiling, key_profiling,
+                                                            x_validation_reshaped, y_validation, plaintext_validation,
+                                                            ciphertext_validation, key_validation,
+                                                            x_attack_reshaped, y_attack, plaintext_attack,
+                                                            ciphertext_attack, key_attack,
+                                                            self.target_params, self.leakage_model, self.key_rank_executions,
+                                                            key_rank_report_interval, key_rank_attack_traces,
+                                                            custom_callback['parameters'])
                 self.add_callback(custom_callback_obj)
-                self.add_custom_callback(custom_callback_obj, custom_callback['name'])
+                self.add_custom_callback(custom_callback_obj, custom_callback['class'])
         callbacks = self.callbacks
 
         if self.data_augmentation_active:
@@ -360,7 +369,7 @@ class AisyAes:
             self.compute_ge_and_sr(x_attack_reshaped,
                                    plaintext_attack, ciphertext_attack,
                                    key_rank_report_interval, key_rank_attack_traces,
-                                   x_validation=x_validation,
+                                   x_validation=x_validation_reshaped,
                                    plaintext_validation=plaintext_validation,
                                    ciphertext_validation=ciphertext_validation,
                                    early_stopping_metric_results=self.callback_early_stopping.get_metric_results() if self.early_stopping_active else None,
@@ -438,7 +447,8 @@ class AisyAes:
                 if self.grid_search_active:
                     self.epochs = random.choice(hp_values["epochs"])
                 else:
-                    self.epochs = random.randrange(hp_values["epochs"]["min"], hp_values["epochs"]["max"], hp_values["epochs"]["step"])
+                    self.epochs = random.randrange(hp_values["epochs"]["min"], hp_values["epochs"]["max"] + hp_values["epochs"]["step"],
+                                                   hp_values["epochs"]["step"])
                 hp["epochs"] = self.epochs
             if "mini_batch" in hp_values:
                 if self.grid_search_active:
@@ -463,8 +473,8 @@ class AisyAes:
                                        ciphertext_validation=ciphertext_validation,
                                        key_validation=key_validation,
                                        custom_callbacks=custom_callbacks)
-            ge_search.append(self.ge_attack[nt_key_rank - 1])
-            sr_search.append(self.sr_attack[nt_key_rank - 1])
+            ge_search.append(self.ge_validation[nt_key_rank - 1])
+            sr_search.append(self.sr_validation[nt_key_rank - 1])
             loss_search.append(history.history["loss"])
             acc_search.append(history.history["accuracy"])
 
@@ -488,7 +498,7 @@ class AisyAes:
             self.learning_rate = backend.eval(self.model.optimizer.lr)
             self.optimizer = self.model.optimizer.__class__.__name__
 
-            self.set_hyper_parameters_search(hp_searches[search_index], self.ge_attack[nt_key_rank - 1])
+            self.set_hyper_parameters_search(hp_searches[search_index], self.ge_validation[nt_key_rank - 1])
 
             if search_index == 0:
                 hp_ids.append(self.save_results_in_database(time.time() - self.start, model_name, hyperparameters_search=True))
@@ -503,7 +513,7 @@ class AisyAes:
 
             if stop_condition:
 
-                if search_metric == "guessing_entropy" and self.ge_attack[nt_key_rank - 1] <= stop_value:
+                if search_metric == "guessing_entropy" and self.ge_validation[nt_key_rank - 1] <= stop_value:
                     best_model_index = search_index
                     print(colored("\nBest Model: {}".format(json.dumps(hp, sort_keys=True, indent=4)), "green"))
                     break
@@ -565,67 +575,96 @@ class AisyAes:
             self.save_metrics()
             self.db_inserts.save_hyper_parameters_search(search_type, grid_search if self.grid_search_active else random_search, hp_id)
 
-    def compute_ensembles(self, nt_key_rank, key_rank_executions, number_of_best_models):
+    def compute_ensembles(self, x_attack, plaintext_attack, ciphertext_attack, number_of_best_models):
 
         number_of_models = len(self.ge_all_validation)
 
-        list_of_best_models = ScaFunctions().get_best_models(number_of_models, self.ge_all_validation, nt_key_rank)
+        nt_interval = int(self.key_rank_attack_traces / self.key_rank_report_interval)
+
+        list_of_best_models = ScaFunctions().get_best_models(number_of_models, self.ge_all_validation, nt_interval)
 
         self.ge_best_model_validation = self.ge_all_validation[list_of_best_models[0]]
         self.ge_best_model_attack = self.ge_all_attack[list_of_best_models[0]]
         self.sr_best_model_validation = self.sr_all_validation[list_of_best_models[0]]
         self.sr_best_model_attack = self.sr_all_attack[list_of_best_models[0]]
 
-        kr_ensemble = np.zeros(nt_key_rank)
-        krs_ensemble = np.zeros((key_rank_executions, nt_key_rank))
-        kr_ensemble_best_models = np.zeros(nt_key_rank)
-        krs_ensemble_best_models = np.zeros((key_rank_executions, nt_key_rank))
+        kr_ensemble = np.zeros(nt_interval)
+        krs_ensemble = np.zeros((self.key_rank_executions, nt_interval))
+        kr_ensemble_best_models = np.zeros(nt_interval)
+        krs_ensemble_best_models = np.zeros((self.key_rank_executions, nt_interval))
 
-        for run in range(key_rank_executions):
+        nt = len(x_attack)
+        labels_key_hypothesis = np.zeros((256, nt))
+        for key_byte_hypothesis in range(0, 256):
+            key_h = bytearray.fromhex(self.target_params["key"])
+            key_h[self.leakage_model["byte"]] = key_byte_hypothesis
+            labels_key_hypothesis[key_byte_hypothesis][:] = aes_intermediates_sr_ge(plaintext_attack, ciphertext_attack, key_h,
+                                                                                    self.leakage_model)
+
+        probabilities_kg_all_traces = np.zeros((number_of_models, nt, 256))
+
+        for model_index in range(number_of_models):
+
+            out_prob_model = self.output_probabilities_all_models[list_of_best_models[model_index]]
+            for index in range(self.key_rank_attack_traces):
+                probabilities_kg_all_traces[model_index][index] = out_prob_model[index][
+                    np.asarray([int(leakage[index]) for leakage in labels_key_hypothesis[:]])
+                    # array with 256 leakage values (1 per key guess)
+                ]
+            print("Processing Model {} of {}".format(model_index + 1, number_of_models))
+
+        for run in range(self.key_rank_executions):
 
             key_p_ensemble = np.zeros(256)
             key_p_ensemble_best_models = np.zeros(256)
 
-            for index in range(nt_key_rank):
+            probabilities_kg_all_traces_shuffled = np.zeros((number_of_models, nt, 256))
+            for model_index in range(number_of_models):
+                probabilities_kg_all_traces_shuffled[model_index] = shuffle(probabilities_kg_all_traces[model_index],
+                                                                            random_state=random.randint(0, 100000))
+
+            kr_count = 0
+            for index in range(self.key_rank_attack_traces):
                 for model_index in range(number_of_models):
-                    key_p_ensemble += np.log(self.k_ps_all[list_of_best_models[model_index]][run][index] + 1e-36)
+                    key_p_ensemble += np.log(probabilities_kg_all_traces_shuffled[model_index][index] + 1e-36)
                 for model_index in range(number_of_best_models):
-                    key_p_ensemble_best_models += np.log(self.k_ps_all[list_of_best_models[model_index]][run][index] + 1e-36)
+                    key_p_ensemble_best_models += np.log(probabilities_kg_all_traces_shuffled[model_index][index] + 1e-36)
 
                 key_p_ensemble_sorted = np.argsort(key_p_ensemble)[::-1]
                 key_p_ensemble_best_models_sorted = np.argsort(key_p_ensemble_best_models)[::-1]
 
-                kr_position = list(key_p_ensemble_sorted).index(self.target_params["good_key"]) + 1
-                kr_ensemble[index] += kr_position
-                krs_ensemble[run][index] = kr_position
+                if (index + 1) % self.key_rank_report_interval == 0:
+                    kr_position = list(key_p_ensemble_sorted).index(self.target_params["good_key"]) + 1
+                    kr_ensemble[kr_count] += kr_position
+                    krs_ensemble[run][kr_count] = kr_position
 
-                kr_position = list(key_p_ensemble_best_models_sorted).index(self.target_params["good_key"]) + 1
-                kr_ensemble_best_models[index] += kr_position
-                krs_ensemble_best_models[run][index] = kr_position
+                    kr_position = list(key_p_ensemble_best_models_sorted).index(self.target_params["good_key"]) + 1
+                    kr_ensemble_best_models[kr_count] += kr_position
+                    krs_ensemble_best_models[run][kr_count] = kr_position
+                    kr_count += 1
 
-            print("Run {} - GE {} models: {} | GE {} models: {} | ".format(run, number_of_models,
-                                                                           int(kr_ensemble[nt_key_rank - 1] / (run + 1)),
-                                                                           number_of_best_models,
-                                                                           int(kr_ensemble_best_models[nt_key_rank - 1] / (run + 1))))
+            print("Run: {} | GE {} models: {} | GE {} best models: {}".format(run, number_of_models,
+                                                                              kr_ensemble[nt_interval - 1] / (run + 1),
+                                                                              number_of_best_models,
+                                                                              kr_ensemble_best_models[nt_interval - 1] / (run + 1)))
 
-        ge_ensemble = kr_ensemble / key_rank_executions
-        ge_ensemble_best_models = kr_ensemble_best_models / key_rank_executions
+        ge_ensemble = kr_ensemble / self.key_rank_executions
+        ge_ensemble_best_models = kr_ensemble_best_models / self.key_rank_executions
 
-        sr_ensemble = np.zeros(nt_key_rank)
-        sr_ensemble_best_models = np.zeros(nt_key_rank)
+        sr_ensemble = np.zeros(nt_interval)
+        sr_ensemble_best_models = np.zeros(nt_interval)
 
-        for index in range(nt_key_rank):
-            for run in range(key_rank_executions):
+        for index in range(nt_interval):
+            for run in range(self.key_rank_executions):
                 sr_ensemble[index] += 1 if krs_ensemble[run][index] == 1 else 0
                 sr_ensemble_best_models[index] += 1 if krs_ensemble_best_models[run][index] == 1 else 0
 
-        return ge_ensemble, ge_ensemble_best_models, sr_ensemble / key_rank_executions, sr_ensemble_best_models / key_rank_executions, \
-               list_of_best_models
+        return ge_ensemble, ge_ensemble_best_models, sr_ensemble / self.key_rank_executions, \
+               sr_ensemble_best_models / self.key_rank_executions, list_of_best_models
 
     def run(self, key_rank_executions=100, key_rank_report_interval=10, key_rank_attack_traces=1000, visualization=None,
             data_augmentation=None, ensemble=None, grid_search=None, random_search=None, early_stopping=None, confusion_matrix=False,
             callbacks=None, save_database=True, compute_ge=True, save_to_npz=None, probability_rank_plot=False):
-
         """
 
         Main AISY framework function. This function runs neural network training for profiled side-channel analysis in a known-key setting.
@@ -692,7 +731,7 @@ class AisyAes:
             self.sr_all_validation = []
             self.ge_all_attack = []
             self.sr_all_attack = []
-            self.k_ps_all = []
+            self.output_probabilities_all_models = []
             if self.target_params["number_of_attack_traces"] == self.key_rank_attack_traces:
                 print("ERROR 8: ensemble feature requires the 'number_of_attack_traces' >= 2 x key_rank_attack_traces.")
                 return
@@ -701,13 +740,20 @@ class AisyAes:
             if self.ensemble_active and grid_search["stop_condition"]:
                 print("ERROR 11: when grid search has a stop condition, ensembles can't be applied.")
                 return
+            if self.target_params["number_of_attack_traces"] == self.key_rank_attack_traces:
+                print("ERROR 14: grid search feature requires the 'number_of_attack_traces' >= 2 x key_rank_attack_traces.")
+                return
         if random_search is not None:
             self.random_search_active = True
-            if ensemble[0] > random_search["max_trials"]:
-                print("ERROR 12: number of models for ensembles can't be larger than maximum number of trials in random search.")
-                return
+            if self.ensemble_active:
+                if ensemble[0] > random_search["max_trials"]:
+                    print("ERROR 12: number of models for ensembles can't be larger than maximum number of trials in random search.")
+                    return
             if self.ensemble_active and random_search["stop_condition"]:
                 print("ERROR 13: when random search has a stop condition, ensembles can't be applied.")
+                return
+            if self.target_params["number_of_attack_traces"] == self.key_rank_attack_traces:
+                print("ERROR 15: random search feature requires the 'number_of_attack_traces' >= 2 x key_rank_attack_traces.")
                 return
         if early_stopping is not None:
             self.early_stopping_active = True
@@ -736,8 +782,8 @@ class AisyAes:
         }
         if self.visualization_active:
             self.settings["visualization"] = visualization[0]
-        if self.data_augmentation_active:
-            self.settings["data_augmentation"] = [data_augmentation[0], data_augmentation[1]]
+        # if self.data_augmentation_active:
+        # self.settings["data_augmentation"] = [data_augmentation[0], data_augmentation[1]]
         if self.ensemble_active:
             self.settings["ensemble"] = ensemble[0]
         if self.grid_search_active:
@@ -748,8 +794,8 @@ class AisyAes:
             self.settings["confusion_matrix"] = True
         if self.early_stopping_active:
             self.settings["early_stopping"] = early_stopping
-        if callbacks is not None:
-            self.settings["callbacks"] = callbacks
+        # if callbacks is not None:
+        #     self.settings["callbacks"] = callbacks
         if save_to_npz is not None:
             self.settings["save_to_npz"] = True
 
@@ -764,7 +810,7 @@ class AisyAes:
                 key_profiling, key_validation, key_attack) = ScaLoadDatasets().load_h5_dataset(
                 self.datasets_root_folder + self.target_params["filename"],
                 self.target_params, self.leakage_model,
-                split_test_set=self.ensemble_active or self.early_stopping_active)
+                split_test_set=self.ensemble_active or self.early_stopping_active or self.grid_search_active or self.random_search_active)
         else:
             print("ERROR 10: Dataset format not supported.")
             return
@@ -772,17 +818,18 @@ class AisyAes:
         # normalize with z-score
         self.create_z_score_norm(X_profiling)
         self.apply_z_score_norm(X_profiling)
-        if self.ensemble_active or self.early_stopping_active:
+        if self.ensemble_active or self.early_stopping_active or self.grid_search_active or self.random_search_active:
             self.apply_z_score_norm(X_validation)
         self.apply_z_score_norm(X_attack)
 
         x_profiling = X_profiling.astype('float32')
-        x_validation = X_validation.astype('float32') if self.ensemble_active or self.early_stopping_active else None
+        x_validation = X_validation.astype(
+            'float32') if self.ensemble_active or self.early_stopping_active or self.grid_search_active or self.random_search_active else None
         x_attack = X_attack.astype('float32')
 
         # convert labels to categorical labels
         y_profiling = to_categorical(Y_profiling, num_classes=self.classes)
-        if self.ensemble_active or self.early_stopping_active:
+        if self.ensemble_active or self.early_stopping_active or self.grid_search_active or self.random_search_active:
             y_validation = to_categorical(Y_validation, num_classes=self.classes)
         else:
             y_validation = None
@@ -807,9 +854,7 @@ class AisyAes:
                             custom_callbacks=callbacks)
             if self.ensemble_active:
                 ge_ensemble, ge_ensemble_best_models, sr_ensemble, sr_ensemble_best_models, list_of_best_models = self.compute_ensembles(
-                    nt_key_rank,
-                    self.key_rank_executions,
-                    ensemble[0])
+                    x_attack, plaintext_attack, ciphertext_attack, ensemble[0])
 
                 self.ge_ensemble = ge_ensemble
                 self.ge_ensemble_best_models = ge_ensemble_best_models
@@ -880,8 +925,6 @@ class AisyAes:
                 if self.save_database:
                     self.__save_probability_ranks(rank_results, "Attack Byte {}".format(self.leakage_model["byte"]))
                 self.save_probability_ranks_figure(rank_results, "Attack Byte {}".format(self.leakage_model["byte"]))
-
-            backend.clear_session()
 
     def __save_metric_avg(self, metric, n_models, name):
         kr_avg = sum(metric[n] for n in range(n_models)) / n_models
@@ -1012,14 +1055,17 @@ class AisyAes:
             self.__save_metric(metric_attack["values"], metric_attack["metric"])
 
     def save_results(self, best_model_search=False, search_index=None):
-        if best_model_search:
-            db_metric_name = "Attack Set Best Model".format(self.epochs)
+        is_validation = (self.ensemble_active or self.early_stopping_active or self.grid_search_active or self.random_search_active) \
+                        and not best_model_search
+        if best_model_search and not self.ensemble_active:
+            db_metric_name = "Validation Set Best Model" if is_validation else "Attack Set Best Model"
         elif search_index is not None:
-            db_metric_name = "Attack Set {}".format(search_index)
+            db_metric_name = "Validation Set {}".format(search_index) if is_validation else "Attack Set {}".format(search_index)
         else:
-            db_metric_name = "Attack Set"
-        self.__save_kr(self.ge_attack, db_metric_name)
-        self.__save_sr(self.sr_attack, db_metric_name)
+            db_metric_name = "Validation Set" if is_validation else "Attack Set"
+        if search_index is not None or not self.ensemble_active:
+            self.__save_kr(self.ge_validation if is_validation else self.ge_attack, db_metric_name)
+            self.__save_sr(self.sr_validation if is_validation else self.sr_attack, db_metric_name)
 
     def save_ensemble_results(self):
         self.__save_kr(self.ge_best_model_attack, "Best Model Attack")
@@ -1068,24 +1114,39 @@ class AisyAes:
     def compute_ge_and_sr(self, x_attack, plaintext_attack, ciphertext_attack,
                           key_rank_report_interval, key_rank_attack_traces, x_validation=None,
                           plaintext_validation=None, ciphertext_validation=None, early_stopping_metric_results=None, best_model=False):
-        self.ge_attack, self.sr_attack, kp_krs = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model, self.target_params,
-                                                                          self.leakage_model,
-                                                                          x_attack, plaintext_attack, ciphertext_attack,
-                                                                          key_rank_report_interval,
-                                                                          key_rank_attack_traces)
+        if (self.grid_search_active or self.random_search_active or self.ensemble_active) and not best_model:
+            print(colored("Computing Guessing Entropy and Success Rate for Validation Set", "blue"))
+            self.ge_validation, self.sr_validation, _ = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model,
+                                                                                 self.target_params,
+                                                                                 self.leakage_model,
+                                                                                 x_validation, plaintext_validation,
+                                                                                 ciphertext_validation,
+                                                                                 key_rank_report_interval,
+                                                                                 key_rank_attack_traces)
+            if self.ensemble_active:
+                print(colored("Computing Guessing Entropy and Success Rate for Attack Set", "green"))
+                self.ge_attack, self.sr_attack, output_probabilities = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model,
+                                                                                                self.target_params,
+                                                                                                self.leakage_model,
+                                                                                                x_attack, plaintext_attack,
+                                                                                                ciphertext_attack,
+                                                                                                key_rank_report_interval,
+                                                                                                key_rank_attack_traces)
 
-        if self.ensemble_active:
-            ge_validation, sr_validation, kp_krs = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model,
-                                                                            self.target_params, self.leakage_model, x_validation,
-                                                                            plaintext_validation, ciphertext_validation,
-                                                                            key_rank_report_interval, key_rank_attack_traces)
-
-            if not best_model:
-                self.ge_all_validation.append(ge_validation)
+                self.ge_all_validation.append(self.ge_validation)
                 self.ge_all_attack.append(self.ge_attack)
-                self.sr_all_validation.append(sr_validation)
+                self.sr_all_validation.append(self.sr_validation)
                 self.sr_all_attack.append(self.sr_attack)
-                self.k_ps_all.append(kp_krs)
+                self.output_probabilities_all_models.append(output_probabilities)
+
+        else:
+            print(colored("Computing Guessing Entropy and Success Rate for Attack Set", "green"))
+            self.ge_attack, self.sr_attack, output_probabilities = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model,
+                                                                                            self.target_params,
+                                                                                            self.leakage_model,
+                                                                                            x_attack, plaintext_attack, ciphertext_attack,
+                                                                                            key_rank_report_interval,
+                                                                                            key_rank_attack_traces)
 
         if self.early_stopping_active:
             self.ge_attack_early_stopping = []
@@ -1096,6 +1157,7 @@ class AisyAes:
                         print("../resources/models/best_model_{}_{}_{}.h5".format(early_stopping_metric, self.timestamp, i))
                         self.model.load_weights("../resources/models/best_model_{}_{}_{}.h5".format(early_stopping_metric,
                                                                                                     self.timestamp, i))
+                        print(colored("Computing Guessing Entropy and Success Rate for Attack Set", "green"))
                         ge_attack, sr_attack, _ = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model, self.target_params,
                                                                            self.leakage_model,
                                                                            x_attack, plaintext_attack, ciphertext_attack,
@@ -1117,6 +1179,7 @@ class AisyAes:
                     print("../resources/models/best_model_{}_{}.h5".format(early_stopping_metric, self.timestamp))
                     self.model.load_weights("../resources/models/best_model_{}_{}.h5".format(early_stopping_metric,
                                                                                              self.timestamp))
+                    print(colored("Computing Guessing Entropy and Success Rate for Attack Set", "green"))
                     ge_attack, sr_attack, _ = ScaFunctions().ge_and_sr(self.key_rank_executions, self.model,
                                                                        self.target_params, self.leakage_model,
                                                                        x_attack, plaintext_attack, ciphertext_attack,

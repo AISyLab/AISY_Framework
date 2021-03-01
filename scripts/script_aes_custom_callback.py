@@ -1,9 +1,7 @@
 from custom.custom_models.neural_networks import *
 from aisy.sca_deep_learning_aes import AisyAes
-from custom.custom_callbacks.callbacks import *
 
 aisy = AisyAes()
-aisy.set_datasets_root_folder("D:/traces/")
 aisy.set_dataset("ascad-variable.h5")
 aisy.set_database_name("database_ascad.sqlite")
 aisy.set_aes_leakage_model(leakage_model="HW", byte=2)
@@ -18,13 +16,11 @@ param2 = "my_string"
 
 custom_callbacks = [
     {
-        "class": CustomCallback1,
-        "name": "CustomCallback1",
+        "class": "CustomCallback1",
         "parameters": [param1, param2]
     },
     {
-        "class": CustomCallback2,
-        "name": "CustomCallback2",
+        "class": "CustomCallback2",
         "parameters": []
     }
 ]

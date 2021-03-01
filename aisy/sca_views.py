@@ -40,7 +40,7 @@ class ScaViews:
                             data[len(data) - 1]['line']['color'] = "ababab"
                             data[len(data) - 1]['line']['width'] = 1.5
                         else:
-                            data[len(data) - 1]['line']['color'] = "009688" if "val_accuracy" in metric else "b71c1c"
+                            data[len(data) - 1]['line']['color'] = "00695c" if "val_accuracy" in metric else "b71c1c"
                             data[len(data) - 1]['line']['width'] = 2.5
 
         for metric in accuracy_metrics:
@@ -57,7 +57,7 @@ class ScaViews:
                          'line': {}
                          }
                     )
-                    data[len(data) - 1]['line']['color'] = "b71c1c"
+                    data[len(data) - 1]['line']['color'] = "00695c" if "val" in metric else "b71c1c"
                     data[len(data) - 1]['line']['width'] = 2.5
 
         return PlotlyPlots().create_line_plot_dash(data, "Epochs", "Accuracy")
@@ -95,7 +95,7 @@ class ScaViews:
                             data[len(data) - 1]['line']['color'] = "ababab"
                             data[len(data) - 1]['line']['width'] = 1.5
                         else:
-                            data[len(data) - 1]['line']['color'] = "009688" if "val_loss" in metric else "b71c1c"
+                            data[len(data) - 1]['line']['color'] = "00695c" if "val_loss" in metric else "b71c1c"
                             data[len(data) - 1]['line']['width'] = 2.5
 
         for metric in loss_metrics:
@@ -112,7 +112,7 @@ class ScaViews:
                          'line': {}
                          }
                     )
-                    data[len(data) - 1]['line']['color'] = "b71c1c"
+                    data[len(data) - 1]['line']['color'] = "00695c" if "val" in metric else "b71c1c"
                     data[len(data) - 1]['line']['width'] = 2.5
 
         return PlotlyPlots().create_line_plot_dash(data, "Epochs", "Loss")
@@ -122,6 +122,7 @@ class ScaViews:
         plotly_plots = PlotlyPlots()
         all_metric_plots = []
         hyper_parameters = self.db.select_all_from_analysis(HyperParameter, self.analysis_id)
+        analysis = self.db.select_analysis(Analysis, self.analysis_id)
 
         metrics = self.db.select_metrics(Metric, self.analysis_id)
         metric_plots = {}
@@ -164,7 +165,11 @@ class ScaViews:
                             plotly_plots.create_line_plot(y=metric_value['values'], line_name=metric_name, line_color=line_color,
                                                           show_legend=show_legend))
                         if len(hyper_parameters) > 1:
-                            best_epoch_metric.append(np.argmax(metric_value['values']))
+                            if "early_stopping" in analysis.settings:
+                                if analysis.settings["early_stopping"]["metrics"][metric_name.replace("val_", "")]["direction"] == "max":
+                                    best_epoch_metric.append(np.argmax(metric_value['values']) + 1)
+                                else:
+                                    best_epoch_metric.append(np.argmin(metric_value['values']) + 1)
 
                 if index == len(hyper_parameters) - 1:
                     metric_name_best = "{} best".format(metric_name)
@@ -182,14 +187,14 @@ class ScaViews:
                         )
 
             all_metric_plots.append({
-                "title": metric_name,
+                "title": "ES {}".format(metric_name),
                 "layout_plotly": plotly_plots.get_plotly_layout("Epochs", metric_name),
                 "plots": metric_plots[metric_name]
             })
 
             if len(hyper_parameters) > 1:
                 all_metric_plots.append({
-                    "title": "Best Epochs {}".format(metric_name),
+                    "title": "ES Best Epochs {}".format(metric_name),
                     "layout_plotly": plotly_plots.get_layout_density("Epochs", "Frequency"),
                     "plots": histogram_best_epoch_metric_plots
                 })
@@ -258,7 +263,7 @@ class ScaViews:
 
         metric_names = []
         for metric in key_rank_metrics:
-            if "Attack Set" not in metric:
+            if "Validation Set" not in metric:
                 metric_names.append(metric)
 
         print(metric_names)
@@ -346,7 +351,7 @@ class ScaViews:
 
         metric_names = []
         for metric in success_rate_metrics:
-            if "Attack Set" not in metric:
+            if "Validation Set" not in metric:
                 metric_names.append(metric)
 
         for metric in metric_names:

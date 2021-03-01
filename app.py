@@ -275,7 +275,7 @@ def gen_plot(analysis_id, table_name, metric):
             result_key_byte.append(db.select_values_from_metric(Metric, metric, analysis_id)[0])
     my_dpi = 100
     plt.figure(figsize=(800 / my_dpi, 600 / my_dpi), dpi=my_dpi)
-    dir_analysis_id = "{}".format(analysis_id)
+    dir_analysis_id = "resources/figures/{}".format(analysis_id)
     if not os.path.exists(dir_analysis_id):
         os.makedirs(dir_analysis_id)
     if metric == "Guessing_Entropy" or metric == "Success_Rate":
@@ -291,7 +291,7 @@ def gen_plot(analysis_id, table_name, metric):
             else:
                 plt.xlabel("Epochs", fontsize=13)
             plt.grid(ls='--')
-        plt.savefig("resources/figures/{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")),
+        plt.savefig("{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")),
                     format="png")
     else:
         for res in result_key_byte:
@@ -301,7 +301,7 @@ def gen_plot(analysis_id, table_name, metric):
             plt.ylabel(metric.replace("_", " "), fontsize=13)
             plt.xlabel("Epochs", fontsize=13)
             plt.grid(ls='--')
-        plt.savefig("resources/figures/{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")),
+        plt.savefig("{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")),
                     format="png")
 
     return "ok"
