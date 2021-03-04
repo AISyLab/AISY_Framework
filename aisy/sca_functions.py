@@ -4,30 +4,6 @@ from sklearn.utils import shuffle
 from aisy.sca_aes_create_intermediates import *
 
 
-class ConditionalAveragerAes:
-
-    def __init__(self, numValues, traceLength):
-        # Allocate the matrix of averaged traces
-        self.avtraces = np.zeros((numValues, traceLength))
-        self.counters = np.zeros(numValues)
-        # print("ConditionalAverager: initialized for {} values and trace length {}".format(numValues, traceLength))
-
-    def addTrace(self, data, trace):
-        # Add a single trace with corresponding single chunk of data
-        data = int(data)
-        if self.counters[data] == 0:
-            self.avtraces[data] = trace
-        else:
-            self.avtraces[data] = self.avtraces[data] + (trace - self.avtraces[data]) / self.counters[data]
-        self.counters[data] += 1
-
-    def getSnapshot(self):
-        # return a snapshot of the average matrix'''
-        avdataSnap = np.flatnonzero(self.counters)  # get an vector of only _observed_ values
-        avtracesSnap = self.avtraces[avdataSnap]  # remove lines corresponding to non-observed values
-        return avdataSnap, avtracesSnap
-
-
 class ScaFunctions:
 
     def ge_and_sr(self, runs, model, param, leakage_model, x_attack, plaintext_attack, ciphertext_attack,
@@ -143,71 +119,3 @@ class ScaFunctions:
             list_of_best_models.append(sorted_models[model_index][2])
 
         return list_of_best_models
-
-    # Even faster correlation trace computation
-    # Takes the full matrix of predictions instead of just a column
-    # O - (n,t) array of n traces with t samples each
-    # P - (n,m) array of n predictions for each of the m candidates
-    # returns an (m,t) correlation matrix of m traces t samples each
-    def correlation_traces(self, o, p):
-        n, t = o.shape  # n traces of t samples
-        # (n_bis, m) = P.shape  # n predictions for each of m candidates
-
-        do = o - (np.einsum("nt->t", o, dtype='float64', optimize='optimal') / np.double(n))  # compute O - mean(O)
-        dp = p - (np.einsum("nm->m", p, dtype='float64', optimize='optimal') / np.double(n))  # compute P - mean(P)
-
-        numerator = np.einsum("nm,nt->mt", dp, do, optimize='optimal')
-        tmp1 = np.einsum("nm,nm->m", dp, dp, optimize='optimal')
-        tmp2 = np.einsum("nt,nt->t", do, do, optimize='optimal')
-        tmp = np.einsum("m,t->mt", tmp1, tmp2, optimize='optimal')
-        denominator = np.sqrt(tmp)
-
-        return numerator / denominator
-
-    def sBoxOut(self, data, keyByte):
-        sBoxIn = data ^ keyByte
-        return self.sbox[sBoxIn]
-
-    def cpa(self, data, samples, correct_key, leakage_model):
-        h = np.zeros((1, len(data)), dtype='uint8')  # intermediate variable predictions
-        hl = np.zeros((1, len(data)))
-
-        if leakage_model["leakage_model"] == "HW":
-            h[0, :] = self.sBoxOut(data, correct_key)
-            hl[0, :] = [bin(iv).count("1") for iv in h[0, :]]
-        elif leakage_model["leakage_model"] == "ID":
-            hl[0, :] = self.sBoxOut(data, correct_key)
-        else:
-            h[0, :] = self.sBoxOut(data, correct_key)
-            hl[0, :] = [int(bin(iv >> leakage_model["bit"])[len(bin(iv >> leakage_model["bit"])) - 1]) for iv in h[0, :]]
-
-        hl = np.array(hl).T
-        corr_traces = self.correlation_traces(samples, hl)
-
-        return corr_traces
-
-    def data_correlation(self, samples, plaintext, key, leakage_model, report_interval):
-
-        # todo: support for different leakage models in AES (only S-Box output, round 1 for now)
-
-        number_of_traces = len(samples)
-        number_of_points = len(samples[0])
-
-        labels = plaintext[:, leakage_model["byte"]]
-
-        corr_traces = None
-
-        tracesToSkip = 20  # warm-up to avoid numerical problems for small evolution step
-
-        CondAver = ConditionalAveragerAes(256, number_of_points)
-        for i in range(tracesToSkip - 1):
-            CondAver.addTrace(labels[i], samples[i])
-        for i in range(tracesToSkip - 1, number_of_traces):
-            CondAver.addTrace(labels[i], samples[i])
-
-            if ((i + 1) % report_interval == 0) or ((i + 1) == number_of_traces):
-                average_data, average_traces = CondAver.getSnapshot()
-                correct_key = key[i][leakage_model["byte"]]
-                corr_traces = self.cpa(average_data, average_traces, correct_key, leakage_model)
-
-        return corr_traces.T
