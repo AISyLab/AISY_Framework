@@ -262,17 +262,35 @@ def gen_script(analysis_id, table_name):
 def gen_plot(analysis_id, table_name, metric):
     db = ScaDatabase(databases_root_folder + table_name)
 
+    analysis = db.select_analysis(Analysis, analysis_id)
+
     if metric == "Guessing_Entropy":
         result_key_byte = db.select_values_from_analysis_json(KeyRank, analysis_id)
     elif metric == "Success_Rate":
         result_key_byte = db.select_values_from_analysis_json(SuccessRate, analysis_id)
     else:
         result_key_byte = []
-        if metric == "accuracy" or metric == "loss":
-            result_key_byte.append(db.select_values_from_metric(Metric, metric, analysis_id)[0])
-            result_key_byte.append(db.select_values_from_metric(Metric, "val_" + metric, analysis_id)[0])
+        all_metrics_names = db.select_metrics(Metric, analysis_id)
+
+        if metric == "accuracy":
+            for metric_name in all_metrics_names:
+                if metric in metric_name:
+                    if "grid_search" in analysis.settings or "random_search" in analysis.settings:
+                        if "best" in metric_name:
+                            result_key_byte.append(db.select_values_from_metric(Metric, metric_name, analysis_id)[0])
+                    else:
+                        result_key_byte.append(db.select_values_from_metric(Metric, metric_name, analysis_id)[0])
+        elif metric == "loss":
+            for metric_name in all_metrics_names:
+                if metric in metric_name:
+                    if "grid_search" in analysis.settings or "random_search" in analysis.settings:
+                        if "best" in metric_name:
+                            result_key_byte.append(db.select_values_from_metric(Metric, metric_name, analysis_id)[0])
+                    else:
+                        result_key_byte.append(db.select_values_from_metric(Metric, metric_name, analysis_id)[0])
         else:
             result_key_byte.append(db.select_values_from_metric(Metric, metric, analysis_id)[0])
+
     my_dpi = 100
     plt.figure(figsize=(800 / my_dpi, 600 / my_dpi), dpi=my_dpi)
     dir_analysis_id = "resources/figures/{}".format(analysis_id)
