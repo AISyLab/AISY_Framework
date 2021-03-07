@@ -1,4 +1,4 @@
-import os
+import sys, os
 
 
 class ScaKerasModels:
@@ -6,11 +6,9 @@ class ScaKerasModels:
     def __init__(self):
         pass
 
-    def keras_model_as_string(self, keras_method_name):
+    def keras_model_as_string(self, keras_method, keras_method_name):
 
-        dir_name = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        file_path = os.path.join(dir_name, 'custom\\custom_models')
-        filename = file_path + "\\neural_networks.py"
+        filename = os.path.abspath(sys.modules[keras_method.__module__].__file__)
 
         file_contents = ""
 
@@ -29,5 +27,5 @@ class ScaKerasModels:
                     print_line = False
 
         if file_contents == "":
-            file_contents = "# only neural network models defined in /neural_networks/neural_networks.py can be displayed here."
+            file_contents = "# to display the keras model definition, you need to pass the method name to set_neural_network() method (instead of an object)"
         return file_contents

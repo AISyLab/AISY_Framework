@@ -31,6 +31,7 @@ class AisyAes:
         self.model = None
         self.model_obj = None
         self.model_name = None
+        self.model_class = None
         self.database_name = None
         self.db_inserts = None
         self.epochs = 50
@@ -234,9 +235,10 @@ class AisyAes:
             dataset[index] = (dataset[index] - self.z_score_mean) / self.z_score_std
 
     def set_neural_network(self, model):
+
         import inspect
         if inspect.isfunction(model):
-
+            self.model_class = model
             if "number_of_samples" not in self.target_params.keys():
                 print("ERROR: Dataset 'number_of_samples' not specified. Please use set_number_of_samples method to specify it.")
                 return
@@ -244,6 +246,7 @@ class AisyAes:
             self.model_name = model.__name__
             self.model = model(self.classes, self.target_params["number_of_samples"])
         else:
+            self.model_class = type(model)
             self.model_name = model.name
             self.model = model
 
@@ -920,7 +923,7 @@ class AisyAes:
                          settings=self.settings,
                          hyperparameters=self.hyper_parameters,
                          leakage_model=self.leakage_model,
-                         model_description=ScaKerasModels().keras_model_as_string(self.model_name), allow_pickle=True
+                         model_description=ScaKerasModels().keras_model_as_string(self.model_class, self.model_name), allow_pickle=True
                          )
             if self.probability_rank_plot:
                 rank_results, _ = ScaFunctions().get_probability_ranks(x_attack, plaintext_attack, ciphertext_attack,
@@ -1042,7 +1045,7 @@ class AisyAes:
             if hyperparameters_search:
                 model_description = "Check the list of searched hyper-parameters"
             else:
-                model_description = sca_keras_model.keras_model_as_string(model_name)
+                model_description = sca_keras_model.keras_model_as_string(self.model_class, model_name)
 
             self.db_inserts.save_neural_network(model_description, model_name)
             self.db_inserts.save_leakage_model(leakage_model)
