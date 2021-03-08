@@ -1,7 +1,6 @@
 from aisy.sca_database import ScaDatabase
 from aisy.sca_tables import *
 import aisy.sca_tables as tables
-import custom.custom_tables.tables as custom_tables
 
 
 class ScaDatabaseInserts:
@@ -9,7 +8,6 @@ class ScaDatabaseInserts:
     def __init__(self, database_name, db_filename, dataset, settings, elapsed_time):
         self.db = ScaDatabase(database_name)
         tables.base().metadata.create_all(self.db.engine)
-        custom_tables.base().metadata.create_all(self.db.engine)
         new_insert = Analysis(db_filename=db_filename, dataset=dataset, settings=settings, elapsed_time=elapsed_time, deleted=False)
         self.analysis_id = self.db.insert(new_insert)
 
@@ -64,7 +62,4 @@ class ScaDatabaseInserts:
     def save_probability_rank(self, ranks, classes, correct_key_byte, key_guess, title, key_byte):
         new_insert = ProbabilityRank(ranks=ranks, classes=classes, correct_key_byte=correct_key_byte, key_guess=key_guess,
                                      title=title, key_byte=key_byte, analysis_id=self.analysis_id)
-        self.db.insert(new_insert)
-
-    def custom_insert(self, new_insert):
         self.db.insert(new_insert)

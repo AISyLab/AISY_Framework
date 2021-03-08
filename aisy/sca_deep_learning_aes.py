@@ -259,6 +259,9 @@ class AisyAes:
     def get_db_inserts(self):
         return self.db_inserts
 
+    def get_analysis_id(self):
+        return self.db_inserts.get_analysis_id()
+
     def get_metrics_profiling(self):
         return self.metric_profiling
 

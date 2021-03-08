@@ -1,11 +1,26 @@
 import datetime
 from sqlalchemy import *
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from aisy.sca_tables import Analysis, Base
+from aisy.sca_tables import Analysis
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+Base = declarative_base()
 
 
 def base():
     return Base
+
+
+def start_custom_tables(database_name):
+    engine = create_engine('sqlite:///{}'.format(database_name), echo=False)
+    base().metadata.create_all(engine)
+
+
+def start_custom_tables_session(database_name):
+    engine = create_engine('sqlite:///{}'.format(database_name), echo=False)
+    return sessionmaker(bind=engine)()
 
 
 class CustomTable(Base):
