@@ -38,7 +38,8 @@ See our documentation page: https://aisylab.github.io/AISY_docs/
 - Easy Neural Network Definitions
 - Data Augmentation
 - GUI - plots, tables
-- Automatically generate scripts    
+- Automatically generate scripts 
+- Fully reproducible script   
 
 ### Example:
 

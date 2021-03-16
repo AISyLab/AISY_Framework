@@ -15,26 +15,26 @@ aisy.set_neural_network(mlp)
 
 early_stopping = {
     "metrics": {
-        # "accuracy": {
-        #     "direction": "max",
-        #     "class": "custom.custom_metrics.accuracy",
-        #     "parameters": []
-        # },
-        # "loss": {
-        #     "direction": "min",
-        #     "class": "custom.custom_metrics.loss",
-        #     "parameters": []
-        # },
+        "accuracy": {
+            "direction": "max",
+            "class": "custom.custom_metrics.accuracy",
+            "parameters": []
+        },
+        "loss": {
+            "direction": "min",
+            "class": "custom.custom_metrics.loss",
+            "parameters": []
+        },
         "number_of_traces": {
             "direction": "min",
             "class": "custom.custom_metrics.number_of_traces",
             "parameters": []
         },
-        # "success_rate": {
-        #     "direction": "max",
-        #     "class": "custom.custom_metrics.success_rate",
-        #     "parameters": []
-        # }
+        "success_rate": {
+            "direction": "max",
+            "class": "custom.custom_metrics.success_rate",
+            "parameters": []
+        }
     }
 }
 
