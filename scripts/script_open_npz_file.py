@@ -1,6 +1,7 @@
+from app import *
 import numpy as np
 
-npz_file = np.load("../resources/npz/aes_attack.npz", allow_pickle=True)
+npz_file = np.load("{}npz/aes_attack.npz".format(resources_root_folder), allow_pickle=True)
 
 # obtaining guessing entropy
 guessing_entropy = npz_file["guessing_entropy"]
@@ -45,7 +46,3 @@ print(hyperparameters)
 # obtaining leakage model
 leakage_model = npz_file["leakage_model"]
 print(leakage_model)
-
-# obtaining keras model description
-model_description = npz_file["model_description"]
-print(model_description)

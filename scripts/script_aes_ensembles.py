@@ -1,11 +1,13 @@
-from aisy.sca_deep_learning_aes import AisyAes
+import aisy_sca
+from app import *
 
-aisy = AisyAes()
-aisy.set_dataset("ascad-variable.h5")
+aisy = aisy_sca.Aisy()
+aisy.set_resources_root_folder(resources_root_folder)
+aisy.set_database_root_folder(databases_root_folder)
+aisy.set_datasets_root_folder(datasets_root_folder)
 aisy.set_database_name("database_ascad.sqlite")
+aisy.set_dataset(datasets_dict["ascad-variable.h5"])
 aisy.set_aes_leakage_model(leakage_model="HW", byte=2)
-aisy.set_number_of_profiling_traces(100000)
-aisy.set_number_of_attack_traces(2000)
 aisy.set_batch_size(400)
 aisy.set_epochs(20)
 
@@ -13,7 +15,7 @@ aisy.set_epochs(20)
 grid_search = {
     "neural_network": "mlp",
     "hyper_parameters_search": {
-        'neurons': [50, 100],
+        'neurons': [100, 200],
         'layers': [2, 3],
         'learning_rate': [0.001, 0.0001],
         'activation': ["relu", "selu"]
@@ -25,8 +27,7 @@ grid_search = {
 }
 
 aisy.run(
-    key_rank_attack_traces=1000,
+    key_rank_attack_traces=500,
     grid_search=grid_search,
-    ensemble=[10],
-    probability_rank_plot=True
+    ensemble=[10]
 )

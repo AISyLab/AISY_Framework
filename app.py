@@ -1,10 +1,10 @@
 from flask import Flask, render_template
-from aisy.sca_database import ScaDatabase
-from aisy.sca_generate_script import generate_script
-from aisy.sca_views import ScaViews
-from aisy.sca_tables import *
-from aisy.plotly.PlotlyPlots import PlotlyPlots
+from aisy_database.db_select import *
+from aisy_database.db_delete import *
 from custom.custom_datasets.datasets import *
+from webapp.mvc.controllers.generate_script import generate_script
+from webapp.mvc.views import views
+from webapp.mvc.views import plotly
 import os
 import time
 import pytz
@@ -85,8 +85,9 @@ def scripts():
     return "ok"
 
 
-databases_root_folder = "my_path/aisy_framework/resources/databases/"
-datasets_root_folder = "my_trace_path"
+databases_root_folder = "my_path/AISY_framework/resources/databases/"
+datasets_root_folder = "my_dataset_folder/"
+resources_root_folder = "my_path/AISY_framework/resources/"
 
 
 @app.route('/tables')
@@ -105,8 +106,8 @@ def table():
 
         if os.path.exists(databases_root_folder + db_file):
 
-            db = ScaDatabase(databases_root_folder + db_file)
-            analysis_all = db.select_all(Analysis)
+            db_select = DBSelect(databases_root_folder + db_file)
+            analysis_all = db_select.select_all(Analysis)
             analyses = []
 
             for analysis in analysis_all:
@@ -116,9 +117,10 @@ def table():
                         localtimezone).__format__(
                         "%b %d, %Y %H:%M:%S")
 
-                    final_key_ranks = db.select_final_key_rank_json_from_analysis(KeyRank, analysis.id)
-                    final_success_rates = db.select_final_success_rate_from_analysis(SuccessRate, analysis.id)
-                    neural_network = db.select_from_analysis(NeuralNetwork, analysis.id)
+                    key_ranks = db_select.select_key_ranks_from_analysis(KeyRank, analysis.id)
+                    success_rates = db_select.select_success_rates_from_analysis(SuccessRate, analysis.id)
+                    neural_network = db_select.select_from_analysis(NeuralNetwork, analysis.id)
+                    leakage_model = db_select.select_from_analysis(LeakageModel, analysis.id)
 
                     analyses.append({
                         "id": analysis.id,
@@ -126,8 +128,9 @@ def table():
                         "dataset": analysis.dataset,
                         "settings": analysis.settings,
                         "elapsed_time": time.strftime('%H:%M:%S', time.gmtime(analysis.elapsed_time)),
-                        "key_ranks": final_key_ranks,
-                        "success_rates": final_success_rates,
+                        "key_ranks": key_ranks,
+                        "success_rates": success_rates,
+                        "leakage_model": leakage_model,
                         "neural_network_name": "not ready" if neural_network is None else neural_network.model_name
                     })
 
@@ -141,18 +144,18 @@ def table():
 def search(table_name):
     if os.path.exists(databases_root_folder + table_name):
 
-        db = ScaDatabase(databases_root_folder + table_name)
-        analysis_all = db.select_all(Analysis)
+        db_select = DBSelect(databases_root_folder + table_name)
+        analysis_all = db_select.select_all(Analysis)
         analyses = []
 
         hp = []
 
         for analysis in analysis_all:
 
-            final_key_ranks = db.select_final_key_rank_json_from_analysis(KeyRank, analysis.id)
+            final_key_ranks = db_select.select_key_ranks_from_analysis(KeyRank, analysis.id)
 
             if len(final_key_ranks) > 0:
-                hyper_parameters = db.select_from_analysis(HyperParameter, analysis.id)
+                hyper_parameters = db_select.select_from_analysis(HyperParameter, analysis.id)
                 training_hyper_parameters = hyper_parameters.hyper_parameters
                 training_hyper_parameters[0]['guessing_entropy'] = final_key_ranks[0][0]['key_rank']
                 hp.append(training_hyper_parameters[0])
@@ -171,53 +174,97 @@ def search(table_name):
 
 @app.route('/result/<int:analysis_id>/<string:table_name>')
 def result(analysis_id, table_name):
-    db = ScaDatabase(databases_root_folder + table_name)
+    db_select = DBSelect(databases_root_folder + table_name)
 
     # get neural network information from database
-    analysis = db.select_analysis(Analysis, analysis_id)
+    analysis = db_select.select_analysis(Analysis, analysis_id)
 
-    sca_views = ScaViews(analysis_id, db)
+    all_metric_plots = views.metric_plots(analysis.id, db_select)
 
-    all_metric_plots = sca_views.metric_plots()
-
-    all_accuracy_plots = sca_views.accuracy_plots()
+    all_accuracy_plots = views.accuracy_plots(analysis.id, db_select)
     dash_app_accuracy.layout = html.Div(children=[all_accuracy_plots])
-    all_loss_plots = sca_views.loss_plots()
+    all_loss_plots = views.loss_plots(analysis.id, db_select)
     dash_app_loss.layout = html.Div(children=[all_loss_plots])
     if "ensemble" in analysis.settings:
-        all_key_rank_plots = sca_views.ensemble_plots_key_rank()
+        all_key_rank_plots = views.ensemble_plots_key_rank(analysis.id, db_select)
     else:
-        all_key_rank_plots = sca_views.key_rank_plots()
+        all_key_rank_plots = views.key_rank_plots(analysis.id, db_select)
     dash_app_key_ranks.layout = html.Div(children=[all_key_rank_plots])
     if "ensemble" in analysis.settings:
-        all_success_rate_plots = sca_views.ensemble_plots_success_rate()
+        all_success_rate_plots = views.ensemble_plots_success_rate(analysis.id, db_select)
     else:
-        all_success_rate_plots = sca_views.success_rate_plots()
+        all_success_rate_plots = views.success_rate_plots(analysis.id, db_select)
     dash_app_success_rates.layout = html.Div(children=[all_success_rate_plots])
 
     # get neural network information from database
-    neural_network_model = db.select_from_analysis(NeuralNetwork, analysis_id)
+    neural_network_model = db_select.select_from_analysis(NeuralNetwork, analysis_id)
 
     # get training hyper-parameters information from database
-    hyper_parameters = db.select_all_from_analysis(HyperParameter, analysis_id)
+    hyper_parameters = db_select.select_all_from_analysis(HyperParameter, analysis_id)
     training_hyper_parameters = []
-    for hp in hyper_parameters:
+    hyper_parameters_table = []
+    for i, hp in enumerate(hyper_parameters):
         training_hyper_parameters.append(hp.hyper_parameters)
+
+        hp_struct = {}
+
+        filter_list = []
+        stride_list = []
+        kernel_list = []
+        pooling_type_list = []
+        pooling_size_list = []
+        pooling_stride_list = []
+
+        if "conv_layers" in hp.hyper_parameters[0]:
+            conv_layers = hp.hyper_parameters[0]["conv_layers"]
+        else:
+            conv_layers = 0
+
+        for hp_key in hp.hyper_parameters[0]:
+            if "filter" in hp_key and len(filter_list) < conv_layers:
+                filter_list.append(hp.hyper_parameters[0][hp_key])
+            elif "pooling_type" in hp_key and len(pooling_type_list) < conv_layers:
+                pooling_type_list.append(hp.hyper_parameters[0][hp_key])
+            elif "pooling_size" in hp_key and len(pooling_size_list) < conv_layers:
+                pooling_size_list.append(hp.hyper_parameters[0][hp_key])
+            elif "pooling_stride" in hp_key and len(pooling_stride_list) < conv_layers:
+                pooling_stride_list.append(hp.hyper_parameters[0][hp_key])
+            elif "stride" in hp_key and len(stride_list) < conv_layers:
+                stride_list.append(hp.hyper_parameters[0][hp_key])
+            elif "kernel" in hp_key and len(kernel_list) < conv_layers:
+                kernel_list.append(hp.hyper_parameters[0][hp_key])
+            else:
+                hp_struct[str(hp_key)] = hp.hyper_parameters[0][hp_key]
+
+        if len(filter_list) > 0:
+            hp_struct["filters"] = filter_list
+        if len(stride_list) > 0:
+            hp_struct["strides"] = stride_list
+        if len(kernel_list) > 0:
+            hp_struct["kernels"] = kernel_list
+        if len(pooling_type_list):
+            hp_struct["pooling_types"] = pooling_type_list
+        if len(pooling_size_list) > 0:
+            hp_struct["pooling_sizes"] = pooling_size_list
+        if len(pooling_stride_list) > 0:
+            hp_struct["pooling_strides"] = pooling_stride_list
+        hp_struct["id"] = hp.id
+        hyper_parameters_table.append(hp_struct)
 
     hyper_parameter_search = []
     if len(hyper_parameters) > 1:
-        hyper_parameter_search = db.select_from_analysis(HyperParameterSearch, analysis.id)
+        hyper_parameter_search = db_select.select_from_analysis(HyperParameterSearch, analysis.id)
 
     # get leakage model information from database
-    leakage_models = db.select_from_analysis(LeakageModel, analysis_id)
-    leakage_model_parameters = leakage_models.leakage_model
+    leakage_model = db_select.select_from_analysis(LeakageModel, analysis_id)
+    leakage_model_parameters = leakage_model.leakage_model
 
     # get visualization plots
-    all_visualization_plots = sca_views.visualization_plots()
-    all_visualization_heatmap_plots = sca_views.visualization_plots_heatmap()
+    all_visualization_plots = views.visualization_plots(analysis.id, db_select)
+    all_visualization_heatmap_plots = views.visualization_plots_heatmap(analysis.id, db_select)
 
     # confusion matrix plot
-    all_confusion_matrix_plots = sca_views.confusion_matrix_plots()
+    all_confusion_matrix_plots = views.confusion_matrix_plots(analysis.id, db_select)
 
     return render_template("dashboard/result.html",
                            all_plots=all_metric_plots,
@@ -226,6 +273,7 @@ def result(analysis_id, table_name):
                            neural_network_description=neural_network_model.description,
                            training_hyper_parameters=training_hyper_parameters,
                            hyper_parameters=hyper_parameters,
+                           hyper_parameters_table=hyper_parameters_table,
                            hyper_parameter_search=hyper_parameter_search,
                            leakage_model_parameters=leakage_model_parameters,
                            all_visualization_plots=all_visualization_plots,
@@ -236,7 +284,6 @@ def result(analysis_id, table_name):
 
 @app.route('/datasets')
 def datasets():
-    plotly_plots = PlotlyPlots()
     all_plots = []
 
     for ds in datasets_dict:
@@ -245,51 +292,80 @@ def datasets():
 
         all_plots.append({
             "title": ds,
-            "layout_plotly": plotly_plots.get_plotly_layout("Samples", "Amplitude (mV)"),
-            "plots": plotly_plots.create_line_plot(y=profiling_samples[0], line_name=ds)
+            "layout_plotly": plotly.get_plotly_layout("Samples", "Amplitude (mV)"),
+            "plots": plotly.create_line_plot(y=profiling_samples[0], line_name=ds)
         })
 
     return render_template("dashboard/datasets.html", all_plots=all_plots)
 
 
-@app.route("/generate_script/<int:analysis_id>/<string:table_name>")
-def gen_script(analysis_id, table_name):
-    generate_script("script_aes_{}".format(analysis_id), databases_root_folder, table_name, analysis_id)
+@app.route("/generate_script/<int:analysis_id>/<string:table_name>/<reproducible>/<from_db>")
+def gen_script(analysis_id, table_name, reproducible, from_db):
+    if reproducible == "true":
+        if from_db == "true":
+            generate_script("script_aes_{}_db_based_reproducible".format(analysis_id), databases_root_folder, table_name, analysis_id, True,
+                            True)
+        else:
+            generate_script("script_aes_{}_reproducible".format(analysis_id), databases_root_folder, table_name, analysis_id, True, False)
+    else:
+        generate_script("script_aes_{}".format(analysis_id), databases_root_folder, table_name, analysis_id, False, False)
     return "ok"
 
 
 @app.route("/generate_plot/<int:analysis_id>/<string:table_name>/<metric>")
 def gen_plot(analysis_id, table_name, metric):
-    db = ScaDatabase(databases_root_folder + table_name)
+    db_select = DBSelect(databases_root_folder + table_name)
 
-    analysis = db.select_analysis(Analysis, analysis_id)
+    analysis = db_select.select_analysis(Analysis, analysis_id)
+    hyper_parameters = db_select.select_all_from_analysis(HyperParameter, analysis_id)
+    best_epoch_metric = []
 
     if metric == "Guessing_Entropy":
-        result_key_byte = db.select_values_from_analysis_json(KeyRank, analysis_id)
+        result_key_byte = db_select.select_key_ranks_from_analysis(KeyRank, analysis_id)
     elif metric == "Success_Rate":
-        result_key_byte = db.select_values_from_analysis_json(SuccessRate, analysis_id)
+        result_key_byte = db_select.select_success_rates_from_analysis(SuccessRate, analysis_id)
     else:
         result_key_byte = []
-        all_metrics_names = db.select_metrics(Metric, analysis_id)
+        all_metrics_names = db_select.select_metric_names_from_analysis(Metric, analysis_id)
 
         if metric == "accuracy":
             for metric_name in all_metrics_names:
                 if metric in metric_name:
                     if "grid_search" in analysis.settings or "random_search" in analysis.settings:
                         if "best" in metric_name:
-                            result_key_byte.append(db.select_values_from_metric(Metric, metric_name, analysis_id)[0])
+                            result_key_byte.append(db_select.select_metric_from_analysis(Metric, metric_name, analysis_id)[0])
                     else:
-                        result_key_byte.append(db.select_values_from_metric(Metric, metric_name, analysis_id)[0])
+                        result_key_byte.append(db_select.select_metric_from_analysis(Metric, metric_name, analysis_id)[0])
         elif metric == "loss":
             for metric_name in all_metrics_names:
                 if metric in metric_name:
                     if "grid_search" in analysis.settings or "random_search" in analysis.settings:
                         if "best" in metric_name:
-                            result_key_byte.append(db.select_values_from_metric(Metric, metric_name, analysis_id)[0])
+                            result_key_byte.append(db_select.select_metric_from_analysis(Metric, metric_name, analysis_id)[0])
                     else:
-                        result_key_byte.append(db.select_values_from_metric(Metric, metric_name, analysis_id)[0])
+                        result_key_byte.append(db_select.select_metric_from_analysis(Metric, metric_name, analysis_id)[0])
         else:
-            result_key_byte.append(db.select_values_from_metric(Metric, metric, analysis_id)[0])
+            if "Best Epochs" in metric:
+                metric = metric.replace("ES ", "")
+                metric = metric.replace("Best Epochs ", "")
+                for m in range(len(hyper_parameters) - 1):
+                    if "early_stopping" in analysis.settings:
+                        metric_value = db_select.select_metric_from_analysis(Metric, "{} {}".format(metric, m), analysis_id)[0]
+                        if analysis.settings["early_stopping"]["metrics"][metric.replace("val_", "")]["direction"] == "max":
+                            best_epoch_metric.append(np.argmax(metric_value['values']) + 1)
+                        else:
+                            best_epoch_metric.append(np.argmin(metric_value['values']) + 1)
+            else:
+                if len(hyper_parameters) > 1:
+                    metric = metric.replace("ES ", "")
+                    for m in range(len(hyper_parameters)):
+                        if m == len(hyper_parameters) - 1:
+                            result_key_byte.append(db_select.select_metric_from_analysis(Metric, "{} best".format(metric), analysis_id)[0])
+                        else:
+                            result_key_byte.append(db_select.select_metric_from_analysis(Metric, "{} {}".format(metric, m), analysis_id)[0])
+                else:
+                    metric = metric.replace("ES ", "")
+                    result_key_byte.append(db_select.select_metric_from_analysis(Metric, metric, analysis_id)[0])
 
     my_dpi = 100
     plt.figure(figsize=(800 / my_dpi, 600 / my_dpi), dpi=my_dpi)
@@ -298,37 +374,53 @@ def gen_plot(analysis_id, table_name, metric):
         os.makedirs(dir_analysis_id)
     if metric == "Guessing_Entropy" or metric == "Success_Rate":
         for res in result_key_byte:
-            plt.plot(np.arange(res['report_interval'], (len(res['values']) + 1) * res['report_interval'], res['report_interval']),
-                     res['values'],
-                     label=res['metric'])
-            plt.legend(loc='best', fontsize=13)
-            plt.xlim([1, len(res['values']) * res['report_interval']])
-            plt.ylabel(metric.replace("_", " "), fontsize=13)
-            if metric == "Guessing_Entropy" or metric == "Success_Rate":
-                plt.xlabel("Attack Traces", fontsize=13)
-            else:
-                plt.xlabel("Epochs", fontsize=13)
-            plt.grid(ls='--')
-        plt.savefig("{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")),
-                    format="png")
+            if "Best" in res['label'] or "Ensemble" in res['label'] or "Attack" in res['label']:
+                plt.grid(ls='--')
+                plt.plot(np.arange(res['report_interval'], (len(res['values']) + 1) * res['report_interval'], res['report_interval']),
+                         res['values'],
+                         label=res['label'])
+                plt.legend(loc='best', fontsize=13)
+                plt.xlim([1, len(res['values']) * res['report_interval']])
+                plt.ylabel(metric.replace("_", " "), fontsize=13)
+                if metric == "Guessing_Entropy" or metric == "Success_Rate":
+                    plt.xlabel("Attack Traces", fontsize=13)
+                else:
+                    plt.xlabel("Epochs", fontsize=13)
+        plt.savefig("{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")), format="png")
     else:
-        for res in result_key_byte:
-            plt.plot(np.arange(1, len(res['values']) + 1, 1), res['values'], label=res['metric'])
+        if len(best_epoch_metric) > 0:
+            max_number_of_epochs = hyper_parameters[0].hyper_parameters[0]['epochs']
+            for hp in hyper_parameters:
+                if hp.hyper_parameters[0]['epochs'] > max_number_of_epochs:
+                    max_number_of_epochs = hp.hyper_parameters[0]['epochs']
+            metric = "Best epochs {}".format(metric.replace("ES ", ""))
+            plt.hist(best_epoch_metric, label=metric, bins=hyper_parameters[0].hyper_parameters[0]['epochs'])
             plt.legend(loc='best', fontsize=13)
-            plt.xlim([1, len(res['values'])])
-            plt.ylabel(metric.replace("_", " "), fontsize=13)
+            plt.ylabel("Frequency", fontsize=13)
             plt.xlabel("Epochs", fontsize=13)
             plt.grid(ls='--')
-        plt.savefig("{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")),
-                    format="png")
+            plt.savefig("{}/best_epochs_{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")),
+                        format="png")
+        else:
+            for res in result_key_byte:
+                if len(hyper_parameters) == 1 or "best" in res['label']:
+                    plt.plot(np.arange(1, len(res['values']) + 1, 1), res['values'], label=res['label'])
+                    plt.legend(loc='best', fontsize=13)
+                else:
+                    plt.plot(np.arange(1, len(res['values']) + 1, 1), res['values'], color="grey", linestyle="--", linewidth=1.0)
+                plt.xlim([1, len(res['values'])])
+                plt.ylabel(metric.replace("_", " "), fontsize=13)
+                plt.xlabel("Epochs", fontsize=13)
+                plt.grid(ls='--')
+            plt.savefig("{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")), format="png")
 
     return "ok"
 
 
 @app.route("/delete_analysis/<int:analysis_id>/<string:table_name>")
 def delete_analysis(analysis_id, table_name):
-    db = ScaDatabase(databases_root_folder + table_name)
-    db.soft_delete_analysis_from_table(Analysis, analysis_id)
+    db_delete = DBDelete(databases_root_folder + table_name)
+    db_delete.soft_delete_analysis_from_table(Analysis, analysis_id)
 
     return "ok"
 

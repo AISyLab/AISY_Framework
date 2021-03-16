@@ -5,6 +5,20 @@ This AISY Framework was developed by AISYLab from TU Delft.
 
 Contributors: Guilherme Perin, Lichao Wu and Stjepan Picek.
 
+### Installation
+
+```
+git clone https://github.com/AISyLab/AISY_Framework.git
+cd AISY_framework
+pip install -r requirements.txt
+```
+
+To start the webapp:
+
+```
+flask run
+```
+
 ### Documentation
 
 See our documentation page: https://aisylab.github.io/AISY_docs/

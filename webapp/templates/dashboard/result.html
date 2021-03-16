@@ -9,9 +9,19 @@
         <div class="row" style="margin-top: 10px">
             <div class="col-12">
                 <button class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"
-                        onclick='generate_script({{ analysis.id }}, "{{ analysis.db_filename }}")'
+                        onclick='generate_script({{ analysis.id }}, "{{ analysis.db_filename }}", false, false)'
                         data-toggle="modal" data-target="#generate_scriptModal">
                     <i class="fas fa-download fa-sm text-white-50"></i> Generate Script
+                </button>
+                <button class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm"
+                        onclick='generate_script({{ analysis.id }}, "{{ analysis.db_filename }}", true, false)'
+                        data-toggle="modal" data-target="#generate_scriptModal">
+                    <i class="fas fa-download fa-sm text-white-50"></i> Generate Reproducible Script
+                </button>
+                <button class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm"
+                        onclick='generate_script({{ analysis.id }}, "{{ analysis.db_filename }}", true, true)'
+                        data-toggle="modal" data-target="#generate_scriptModal">
+                    <i class="fas fa-download fa-sm text-white-50"></i> Generate DB-based Reproducible Script
                 </button>
                 <!-- Modal -->
                 <div class="modal fade" id="generate_scriptModal" tabindex="-1" role="dialog"
@@ -22,7 +32,8 @@
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Script generated successfully!</h5>
                             </div>
-                            <div class="modal-body">Script name: <b>script_aes_{{ analysis.id }}.py</b>. Check your
+                            <div class="modal-body">Script name: <b>script_aes_{{ analysis.id }}_{{ analysis.db_filename }}.py</b>. Check
+                                your
                                 'scripts' folder inside your project directory.
                             </div>
                             <div class="modal-footer">
@@ -32,9 +43,9 @@
                     </div>
                 </div>
                 <script type="application/javascript">
-                    function generate_script(analysis_id, table_name) {
+                    function generate_script(analysis_id, table_name, reproducible, from_db) {
                         $.ajax({
-                            url: '/generate_script/' + analysis_id + "/" + table_name,
+                            url: '/generate_script/' + analysis_id + "/" + table_name + "/" + reproducible + "/" + from_db,
                             success: function (data) {
 
                             }
@@ -55,7 +66,7 @@
                         <!-- Card Body -->
                         <div class="card-body">
                             {% for hyper_parameter in training_hyper_parameters[0] %}
-                                 <div class="row">
+                                <div class="row">
                                     {% for key, value in hyper_parameter.items() %}
                                         <div class="col-xl-2 col-md-6 mb-4">
                                             <div class="card border-left-dark shadow h-100 py-2">
@@ -90,27 +101,23 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                     <tr>
-                                        {% for hp in hyper_parameters[0].hyper_parameters %}
-                                            {% for key, value in hp.items() %}
-                                                <th style="padding: 5px; font-size: 13px">{{ key }}</th>
-                                            {% endfor %}
+                                        {% for key, value in hyper_parameters_table[0].items() %}
+                                            <th style="padding: 5px; font-size: 13px">{{ key }}</th>
                                         {% endfor %}
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for hp in hyper_parameters %}
-                                        {% for hyper_parameter in hp.hyper_parameters %}
-                                            <tr>
-                                                {% for key, value in hyper_parameter.items() %}
-                                                    {% if hp.id == hyper_parameter_search.best_hyper_parameters %}
-                                                        <td class="text-success"
-                                                            style="padding: 5px; font-size: 13px; font-weight: bold">{{ value }}</td>
-                                                    {% else %}
-                                                        <td style="padding: 5px; font-size: 13px">{{ value }}</td>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </tr>
-                                        {% endfor %}
+
+                                    {% for hyper_parameter in hyper_parameters_table %}
+                                        <tr>
+                                            {% for key, value in hyper_parameter.items() %}
+                                                {% if hyper_parameter['id'] == hyper_parameter_search.best_hyper_parameters %}
+                                                    <td class="text-success" style="padding: 5px; font-size: 13px; font-weight: bold">{{ value }}</td>
+                                                {% else %}
+                                                    <td style="padding: 5px; font-size: 13px">{{ value }}</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
                                     {% endfor %}
                                     </tbody>
                                 </table>
@@ -131,23 +138,21 @@
                 <!-- Card Body -->
                 <div class="card-body">
                     <div class="row">
-                        {% for leakage_model in leakage_model_parameters %}
-                            {% for key, value in leakage_model.items() %}
-                                <div class="col-xl-2 col-md-6 mb-4">
-                                    <div class="card border-left-dark shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                                        {{ key }}
-                                                    </div>
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ value }}</div>
+                        {% for key, value in leakage_model_parameters.items() %}
+                            <div class="col-xl-2 col-md-6 mb-4">
+                                <div class="card border-left-dark shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                                    {{ key }}
                                                 </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ value }}</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            {% endfor %}
+                            </div>
                         {% endfor %}
                     </div>
                 </div>

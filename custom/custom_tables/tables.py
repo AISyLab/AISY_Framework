@@ -2,9 +2,9 @@ import datetime
 from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from aisy.sca_tables import Analysis
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from aisy_database.db_tables import Analysis
 
 Base = declarative_base()
 

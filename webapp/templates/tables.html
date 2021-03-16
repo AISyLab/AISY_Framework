@@ -20,10 +20,10 @@
                     <span style="color: #1e88e5; font-weight: 700">{{ all_tables_names[tableloop.index - 1] }}</span>
                 </h4>
 
-<!--                Paralell Plot-->
-<!--                <a href="{{ url_for('search', table_name=all_tables_names[tableloop.index - 1]) }}">-->
-<!--                    <i class="fas fa-fw fa-chart-bar text-dark"></i>-->
-<!--                </a>-->
+                <!--                Paralell Plot-->
+                <!--                <a href="{{ url_for('search', table_name=all_tables_names[tableloop.index - 1]) }}">-->
+                <!--                    <i class="fas fa-fw fa-chart-bar text-dark"></i>-->
+                <!--                </a>-->
 
                 {% if analyses|length %}
                     <div class="table-responsive">
@@ -57,22 +57,20 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            {% for key_ranks in analysis.key_ranks %}
+                                            {% for key_rank in analysis.key_ranks %}
                                                 {% set rowloop = loop %}
-                                                {% for key_rank in key_ranks %}
-                                                    <tr>
-                                                        <td style="padding: 2px; font-size: 13px; text-align:center">{{ key_rank.key_byte }}</td>
-                                                        <td style="padding: 2px; font-size: 13px;">
-                                                            <b class="text-success">{{ key_rank.metric }}</b>
-                                                        </td>
-                                                        <td style="padding: 2px; font-size: 13px; text-align:center">
-                                                            <b class="text-success">{{ key_rank.key_rank }}</b>
-                                                        </td>
-                                                        <td style="padding: 2px; font-size: 13px; text-align:center">
-                                                            <b class="text-success">{{ analysis.success_rates[rowloop.index - 1][loop.index - 1]['success_rate'] }}</b>
-                                                        </td>
-                                                    </tr>
-                                                {% endfor %}
+                                                <tr>
+                                                    <td style="padding: 2px; font-size: 13px; text-align:center">{{ analysis.leakage_model.leakage_model["byte"] }}</td>
+                                                    <td style="padding: 2px; font-size: 13px;">
+                                                        <b class="text-success">{{ key_rank['label'] }}</b>
+                                                    </td>
+                                                    <td style="padding: 2px; font-size: 13px; text-align:center">
+                                                        <b class="text-success">{{ key_rank['key_rank'] }}</b>
+                                                    </td>
+                                                    <td style="padding: 2px; font-size: 13px; text-align:center">
+                                                        <b class="text-success">{{ analysis.success_rates[rowloop.index - 1]['success_rate'] }}</b>
+                                                    </td>
+                                                </tr>
                                             {% endfor %}
                                             </tbody>
                                         </table>
@@ -83,7 +81,8 @@
                                         <a href="{{ url_for('result', analysis_id=analysis.id, table_name=all_tables_names[tableloop.index - 1]) }}">
                                             <i class="fas fa-fw fa-chart-area text-dark"></i>
                                         </a>
-                                        <a style="cursor: pointer" data-toggle="modal" data-target="#delete_analysis_modal" onclick='set_analysis_to_delete({{ analysis.id }}, "{{ all_tables_names[tableloop.index - 1] }}")'>
+                                        <a style="cursor: pointer" data-toggle="modal" data-target="#delete_analysis_modal"
+                                           onclick='set_analysis_to_delete({{ analysis.id }}, "{{ all_tables_names[tableloop.index - 1] }}")'>
                                             <i class="fas fa-fw fa-trash text-danger"></i>
                                         </a>
                                     </td>
@@ -117,12 +116,14 @@
         <script type="application/javascript">
             var tablename = ""
             var analysisid = 0
+
             function set_analysis_to_delete(analysis_id, table_name) {
                 tablename = table_name
                 analysisid = analysis_id
                 console.log(tablename)
                 console.log(analysisid)
             }
+
             function delete_analysis() {
                 $.ajax({
                     url: '/delete_analysis/' + analysisid + "/" + tablename,

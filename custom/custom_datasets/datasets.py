@@ -13,7 +13,7 @@ datasets_dict = {
         "first_sample": 0,
         "number_of_samples": 1400,
         "number_of_profiling_traces": 100000,
-        "number_of_attack_traces": 1000
+        "number_of_attack_traces": 2000
     },
     "ches_ctf.h5": {
         "filename": "ches_ctf.h5",

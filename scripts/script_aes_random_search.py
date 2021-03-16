@@ -1,13 +1,15 @@
-from aisy.sca_deep_learning_aes import AisyAes
+import aisy_sca
+from app import *
 
-aisy = AisyAes()
-aisy.set_dataset("ascad-variable.h5")
+aisy = aisy_sca.Aisy()
+aisy.set_resources_root_folder(resources_root_folder)
+aisy.set_database_root_folder(databases_root_folder)
+aisy.set_datasets_root_folder(datasets_root_folder)
 aisy.set_database_name("database_ascad.sqlite")
+aisy.set_dataset(datasets_dict["ascad-variable.h5"])
 aisy.set_aes_leakage_model(leakage_model="HW", byte=2)
-aisy.set_number_of_profiling_traces(100000)
-aisy.set_number_of_attack_traces(2000)
 aisy.set_batch_size(400)
-aisy.set_epochs(20)
+aisy.set_epochs(10)
 
 # for each hyper-parameter, specify the min, max and step or the possible options
 random_search = {
@@ -31,7 +33,7 @@ random_search = {
         'learning_rate': [0.001, 0.0009, 0.0008, 0.0007, 0.0006, 0.0005, 0.0004, 0.0003, 0.0002, 0.0001],
         'activation': ["relu", "selu", "elu", "tanh"],
         'epochs': {"min": 5, "max": 5, "step": 1},
-        'mini_batch': {"min": 100, "max": 1000, "step": 100},
+        'batch_size': {"min": 100, "max": 1000, "step": 100},
         'optimizer': ["Adam", "RMSprop", "Adagrad", "Adadelta", "SGD"]
     },
     "metric": "guessing_entropy",
@@ -43,6 +45,5 @@ random_search = {
 
 aisy.run(
     random_search=random_search,
-    ensemble=[5],
     key_rank_attack_traces=500
 )

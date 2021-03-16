@@ -1,11 +1,12 @@
+import aisy_sca
+from app import *
 from custom.custom_models.neural_networks import *
-from aisy.sca_deep_learning_aes import AisyAes
 from lottery_ticket_pruner import LotteryTicketPruner
 
 epochs = 50
 
-aisy = AisyAes()
-aisy.set_dataset("ascad-variable.h5")
+aisy = aisy_sca.Aisy()
+aisy.set_dataset(datasets_dict["ascad-variable.h5"])
 aisy.set_database_name("database_ascad.sqlite")
 aisy.set_aes_leakage_model(leakage_model="HW", byte=2)
 aisy.set_number_of_profiling_traces(100000)
@@ -51,8 +52,8 @@ lth_pruner.calc_prune_mask(model, 0.01 * sparsity_level, 'smallest_weights')
 model.set_weights(initial_weights)
 lth_pruner.apply_pruning(model)
 
-aisy = AisyAes()
-aisy.set_dataset("ascad-variable.h5")
+aisy = aisy_sca.Aisy()
+aisy.set_dataset(datasets_dict["ascad-variable.h5"])
 aisy.set_database_name("database_ascad.sqlite")
 aisy.set_aes_leakage_model(leakage_model="HW", byte=2)
 aisy.set_number_of_profiling_traces(100000)
