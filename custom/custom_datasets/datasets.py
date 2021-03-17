@@ -23,12 +23,20 @@ datasets_dict = {
         "number_of_profiling_traces": 45000,
         "number_of_attack_traces": 5000
     },
-    "hw_aes.h5": {
-        "filename": "hw_aes.h5",
-        "key": "0123456789abcdef123456789abcdef0",
+    "aes_hd.h5": {
+        "filename": "aes_hd.h5",
+        "key": "2b7e151628aed2a6abf7158809cf4f3c",
         "first_sample": 0,
-        "number_of_samples": 1668,
-        "number_of_profiling_traces": 10000,
-        "number_of_attack_traces": 10000
+        "number_of_samples": 1250,
+        "number_of_profiling_traces": 45000,
+        "number_of_attack_traces": 5000
+    },
+    "aes_hd_ext.h5": {
+        "filename": "aes_hd.h5",
+        "key": "2b7e151628aed2a6abf7158809cf4f3c",
+        "first_sample": 0,
+        "number_of_samples": 1250,
+        "number_of_profiling_traces": 450000,
+        "number_of_attack_traces": 50000
     }
 }
