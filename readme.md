@@ -63,10 +63,10 @@ aisy.run()
 
 If you use our framework, please consider citing:
 
-    @misc{AISY_Framework,
+    @misc{cryptoeprint:2021:357,
       author = {Guilherme Perin and Lichao Wu and Stjepan Picek},
       title  = {{AISY - Deep Learning-based Framework for Side-Channel Analysis}},
-      howpublished = {AISyLab repository},
-      note   = {{\url{https://github.com/AISyLab/AISY_Framework}}},
+      howpublished = {Cryptology ePrint Archive, Report 2021/357},
+      note   = {\url{https://eprint.iacr.org/2021/357}},
       year   = {2021}
     }
