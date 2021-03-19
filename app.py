@@ -251,15 +251,19 @@ def result(analysis_id, table_name):
     # get neural network information from database
     neural_network_model = db_select.select_from_analysis(NeuralNetwork, analysis_id)
 
+    neural_network_description = None
     hyper_parameter_search = []
     if len(hyper_parameters) > 1:
         hyper_parameter_search = db_select.select_from_analysis(HyperParameterSearch, analysis.id)
-        neural_network_description = {}
-        model_description = json.loads(neural_network_model.description)
-        for k, v in model_description.items():
-            neural_network_description[k] = v
+        if neural_network_model is not None:
+            neural_network_description = {}
+            model_description = json.loads(neural_network_model.description)
+            print(model_description['0'])
+            for k, v in model_description.items():
+                neural_network_description[k] = v
     else:
-        neural_network_description = neural_network_model.description
+        if neural_network_model is not None:
+            neural_network_description = neural_network_model.description
 
     # get leakage model information from database
     leakage_model = db_select.select_from_analysis(LeakageModel, analysis_id)
