@@ -196,9 +196,6 @@ def result(analysis_id, table_name):
         all_success_rate_plots = views.success_rate_plots(analysis.id, db_select)
     dash_app_success_rates.layout = html.Div(children=[all_success_rate_plots])
 
-    # get neural network information from database
-    neural_network_model = db_select.select_from_analysis(NeuralNetwork, analysis_id)
-
     # get training hyper-parameters information from database
     hyper_parameters = db_select.select_all_from_analysis(HyperParameter, analysis_id)
     training_hyper_parameters = []
@@ -251,9 +248,18 @@ def result(analysis_id, table_name):
         hp_struct["id"] = hp.id
         hyper_parameters_table.append(hp_struct)
 
+    # get neural network information from database
+    neural_network_model = db_select.select_from_analysis(NeuralNetwork, analysis_id)
+
     hyper_parameter_search = []
     if len(hyper_parameters) > 1:
         hyper_parameter_search = db_select.select_from_analysis(HyperParameterSearch, analysis.id)
+        neural_network_description = {}
+        model_description = json.loads(neural_network_model.description)
+        for k, v in model_description.items():
+            neural_network_description[k] = v
+    else:
+        neural_network_description = neural_network_model.description
 
     # get leakage model information from database
     leakage_model = db_select.select_from_analysis(LeakageModel, analysis_id)
@@ -270,7 +276,7 @@ def result(analysis_id, table_name):
                            all_plots=all_metric_plots,
                            all_key_rank_plots=all_key_rank_plots,
                            all_success_rate_plots=all_success_rate_plots,
-                           neural_network_description=neural_network_model.description,
+                           neural_network_description=neural_network_description,
                            training_hyper_parameters=training_hyper_parameters,
                            hyper_parameters=hyper_parameters,
                            hyper_parameters_table=hyper_parameters_table,

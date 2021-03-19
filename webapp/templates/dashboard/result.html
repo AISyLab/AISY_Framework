@@ -112,7 +112,8 @@
                                         <tr>
                                             {% for key, value in hyper_parameter.items() %}
                                                 {% if hyper_parameter['id'] == hyper_parameter_search.best_hyper_parameters %}
-                                                    <td class="text-success" style="padding: 5px; font-size: 13px; font-weight: bold">{{ value }}</td>
+                                                    <td class="text-success"
+                                                        style="padding: 5px; font-size: 13px; font-weight: bold">{{ value }}</td>
                                                 {% else %}
                                                     <td style="padding: 5px; font-size: 13px">{{ value }}</td>
                                                 {% endif %}
@@ -167,7 +168,7 @@
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 font-weight-bold text-primary">Keras Model Information</h6>
                     </div>
-                    <pre style="margin: 0">
+                    <pre style="margin: 0; font-size: 12px">
             <code class="language-python">
 {{ neural_network_description }}
             </code>
@@ -177,14 +178,22 @@
         </div>
     {% else %}
         <div class="row" style="padding-top:10px;">
-            <div class="col-12">
-                <div class="card shadow mb-6">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Keras Model Information</h6>
+        {% for model_description in neural_network_description %}
+
+                <div class="col-4">
+                    <div class="card shadow mb-6">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Model Search {{ model_description }}</h6>
+                        </div>
+                        <pre style="margin: 0; font-size: 10px">
+            <code class="language-python">
+{{ neural_network_description[model_description] }}
+            </code>
+        </pre>
                     </div>
-                    {{ neural_network_description }}
                 </div>
-            </div>
+
+        {% endfor %}
         </div>
     {% endif %}
 
