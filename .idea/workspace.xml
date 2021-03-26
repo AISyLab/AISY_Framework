@@ -19,11 +19,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/guessing_entropy.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/guessing_entropy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/success_rate.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/success_rate.py" afterDir="false" />
-    </list>
+    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -247,7 +243,7 @@
       <workItem from="1616370019388" duration="19000" />
       <workItem from="1616525682618" duration="1050000" />
       <workItem from="1616547208212" duration="1241000" />
-      <workItem from="1616553774565" duration="62000" />
+      <workItem from="1616553774565" duration="215000" />
     </task>
     <task id="LOCAL-00001" summary="fixes in ensembles">
       <created>1614612585866</created>
