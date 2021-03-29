@@ -19,7 +19,13 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models" />
+    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/guessing_entropy.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/guessing_entropy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/number_of_traces.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/number_of_traces.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/success_rate.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/success_rate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,6 +51,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="TERMINAL_CUSTOM_COMMANDS_GOT_IT" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../aisy" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -244,6 +251,8 @@
       <workItem from="1616525682618" duration="1050000" />
       <workItem from="1616547208212" duration="1241000" />
       <workItem from="1616553774565" duration="215000" />
+      <workItem from="1616773213204" duration="451000" />
+      <workItem from="1617043588669" duration="1788000" />
     </task>
     <task id="LOCAL-00001" summary="fixes in ensembles">
       <created>1614612585866</created>

@@ -56,10 +56,8 @@ def run(x_profiling, y_profiling, plaintexts_profiling,
                 key_ranking_sum[kr_count] += key_ranking_good_key
                 kr_count += 1
 
-        final_kr = key_ranking_sum[nt_interval - 1]
-        print("KR run: {} | final Guessing Entropy for correct key ({}): {})".format(key_rank_execution + 1, good_key,
-                                                                                     final_kr / (key_rank_execution + 1)))
-
     guessing_entropy = key_ranking_sum / key_rank_executions
+
+    print("Guessing Entropy = {}".format(guessing_entropy[nt_interval - 1]))
 
     return guessing_entropy[nt_interval - 1]

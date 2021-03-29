@@ -3,7 +3,6 @@ import random
 from sklearn.utils import shuffle
 from aisy_sca.sca_aes_create_intermediates import *
 
-
 def run(x_profiling, y_profiling, plaintexts_profiling,
         ciphertexts_profiling, key_profiling,
         x_validation, y_validation, plaintexts_validation,
@@ -27,6 +26,7 @@ def run(x_profiling, y_profiling, plaintexts_profiling,
         key_h[leakage_model["byte"]] = key_byte_hypothesis
         labels_key_hypothesis[key_byte_hypothesis][:] = aes_intermediates_sr_ge(plaintexts_validation, ciphertexts_validation, key_h,
                                                                                 leakage_model)
+
     good_key = [int(x) for x in bytearray.fromhex(param["key"])][leakage_model["byte"]]
 
     # ---------------------------------------------------------------------------------------------------------#
@@ -59,10 +59,8 @@ def run(x_profiling, y_profiling, plaintexts_profiling,
 
                 kr_count += 1
 
-        final_sr = success_rate_sum[nt_interval - 1]
-        print("KR run: {} | final Success Rate for correct key ({}): {})".format(key_rank_execution + 1, good_key,
-                                                                                 final_sr / (key_rank_execution + 1)))
-
     success_rate = success_rate_sum / key_rank_executions
+
+    print("Success Rate = {}".format(success_rate[nt_interval - 1]))
 
     return success_rate[nt_interval - 1]
