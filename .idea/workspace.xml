@@ -20,11 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/guessing_entropy.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/guessing_entropy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/number_of_traces.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/number_of_traces.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/success_rate.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/success_rate.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -252,7 +249,9 @@
       <workItem from="1616547208212" duration="1241000" />
       <workItem from="1616553774565" duration="215000" />
       <workItem from="1616773213204" duration="451000" />
-      <workItem from="1617043588669" duration="1788000" />
+      <workItem from="1617043588669" duration="1844000" />
+      <workItem from="1617900608032" duration="605000" />
+      <workItem from="1619709485490" duration="109000" />
     </task>
     <task id="LOCAL-00001" summary="fixes in ensembles">
       <created>1614612585866</created>
