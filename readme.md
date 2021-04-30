@@ -67,6 +67,20 @@ aisy.set_neural_network(mlp)
 aisy.run()
 ```
 
+### Running a script
+
+After your AISY Framework project is set on your local machine, to run scripts that are placed inside ```scripts``` folder from 
+command line or terminal, we recommend to write the following lines on your script (as the first lines of script code):
+
+```python
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.getcwd()))
+```
+
+However, if you prefer to run scripts from inside an IDE such as PyCharm, you don't have to set the above code in your scripts.
+
 If you use our framework, please consider citing:
 
     @misc{cryptoeprint:2021:357,
