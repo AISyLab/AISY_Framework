@@ -19,15 +19,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models">
-      <change beforePath="$PROJECT_DIR$/.idea/aisy_framework.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/git" beforeDir="false" />
-    </list>
+    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -395,6 +387,10 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="393" y="0" width="1110" height="824" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1615210800163" />
+    <state x="93" y="93" width="1350" height="638" key="DiffContextDialog" timestamp="1619792875757">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="93" y="93" width="1350" height="638" key="DiffContextDialog/0.0.1536.824@0.0.1536.824" timestamp="1619792875757" />
     <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1614777961413">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -431,10 +427,22 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1493" height="261" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1615602899731" />
+    <state x="407" y="174" key="MultipleFileMergeDialog" timestamp="1619792732594">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="407" y="174" key="MultipleFileMergeDialog/0.0.1536.824@0.0.1536.824" timestamp="1619792732594" />
+    <state x="557" y="115" key="RollbackChangesDialog" timestamp="1619792601595">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="557" y="115" key="RollbackChangesDialog/0.0.1536.824@0.0.1536.824" timestamp="1619792601595" />
     <state x="277" y="57" key="SettingsEditor" timestamp="1613593820088">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="277" y="57" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1613593820088" />
+    <state x="618" y="327" key="VCS.ChangelistChooser" timestamp="1619792644444">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="618" y="327" key="VCS.ChangelistChooser/0.0.1536.824@0.0.1536.824" timestamp="1619792644444" />
     <state x="-91" y="371" width="1350" height="638" maximized="true" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1616011807932">
       <screen x="0" y="0" width="1536" height="824" />
     </state>

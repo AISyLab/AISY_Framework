@@ -81,6 +81,8 @@ sys.path.append(os.path.abspath(os.getcwd()))
 
 However, if you prefer to run scripts from inside an IDE such as PyCharm, you don't have to set the above code in your scripts.
 
+Alternatively, you can place your script files outside ```scripts``` folder (in your project root directory) and run them from there.
+
 If you use our framework, please consider citing:
 
     @misc{cryptoeprint:2021:357,
