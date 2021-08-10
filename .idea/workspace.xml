@@ -19,9 +19,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -191,6 +189,7 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -254,6 +253,7 @@
       <workItem from="1619792080725" duration="230000" />
       <workItem from="1619793863159" duration="141000" />
       <workItem from="1622830581131" duration="2000" />
+      <workItem from="1628596814551" duration="138000" />
     </task>
     <task id="LOCAL-00001" summary="fixes in ensembles">
       <created>1614612585866</created>
@@ -350,7 +350,7 @@
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="2" />
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
