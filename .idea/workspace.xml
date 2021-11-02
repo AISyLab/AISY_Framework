@@ -19,7 +19,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models" />
+    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -30,6 +33,17 @@
       <list>
         <option value="Python Script" />
       </list>
+    </option>
+  </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
     </option>
   </component>
   <component name="Git.Settings">
@@ -47,7 +61,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="TERMINAL_CUSTOM_COMMANDS_GOT_IT" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../aisy" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -55,7 +69,7 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -254,6 +268,11 @@
       <workItem from="1619793863159" duration="141000" />
       <workItem from="1622830581131" duration="2000" />
       <workItem from="1628596814551" duration="138000" />
+      <workItem from="1628607613531" duration="77000" />
+      <workItem from="1631905566896" duration="63000" />
+      <workItem from="1635692592164" duration="18000" />
+      <workItem from="1635692696076" duration="23000" />
+      <workItem from="1635848999660" duration="133000" />
     </task>
     <task id="LOCAL-00001" summary="fixes in ensembles">
       <created>1614612585866</created>
@@ -377,88 +396,6 @@
     <MESSAGE value="custom tables fix" />
     <MESSAGE value="datasets and models" />
     <option name="LAST_COMMIT_MESSAGE" value="datasets and models" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="530" y="214" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1619792099252">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="530" y="214" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.824@0.0.1536.824" timestamp="1619792099252" />
-    <state x="499" y="159" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1613598304509">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="499" y="159" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.824@0.0.1536.824" timestamp="1613598304509" />
-    <state x="393" y="0" width="1110" height="824" key="CommitChangelistDialog2" timestamp="1615210800163">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="393" y="0" width="1110" height="824" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1615210800163" />
-    <state x="93" y="93" width="1350" height="638" key="DiffContextDialog" timestamp="1619792875757">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="93" y="93" width="1350" height="638" key="DiffContextDialog/0.0.1536.824@0.0.1536.824" timestamp="1619792875757" />
-    <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1614777961413">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="549" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1614777961413" />
-    <state width="1493" height="217" key="GridCell.Tab.0.bottom" timestamp="1616529175045">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="217" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1616529175045" />
-    <state width="1493" height="217" key="GridCell.Tab.0.center" timestamp="1616529175045">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="217" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1616529175045" />
-    <state width="1493" height="217" key="GridCell.Tab.0.left" timestamp="1616529175045">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="217" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1616529175045" />
-    <state width="1493" height="217" key="GridCell.Tab.0.right" timestamp="1616529175045">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="217" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1616529175045" />
-    <state width="1493" height="261" key="GridCell.Tab.1.bottom" timestamp="1615602899731">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="261" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1615602899731" />
-    <state width="1493" height="261" key="GridCell.Tab.1.center" timestamp="1615602899730">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="261" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1615602899730" />
-    <state width="1493" height="261" key="GridCell.Tab.1.left" timestamp="1615602899730">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="261" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1615602899730" />
-    <state width="1493" height="261" key="GridCell.Tab.1.right" timestamp="1615602899731">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1493" height="261" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1615602899731" />
-    <state x="407" y="174" key="MultipleFileMergeDialog" timestamp="1619792732594">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="407" y="174" key="MultipleFileMergeDialog/0.0.1536.824@0.0.1536.824" timestamp="1619792732594" />
-    <state x="557" y="115" key="RollbackChangesDialog" timestamp="1619792601595">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="557" y="115" key="RollbackChangesDialog/0.0.1536.824@0.0.1536.824" timestamp="1619792601595" />
-    <state x="277" y="57" key="SettingsEditor" timestamp="1613593820088">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="277" y="57" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1613593820088" />
-    <state x="618" y="327" key="VCS.ChangelistChooser" timestamp="1619792644444">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="618" y="327" key="VCS.ChangelistChooser/0.0.1536.824@0.0.1536.824" timestamp="1619792644444" />
-    <state x="-91" y="371" width="1350" height="638" maximized="true" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1616011807932">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="-91" y="371" width="1350" height="638" maximized="true" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1536.824@0.0.1536.824" timestamp="1616011807932" />
-    <state x="478" y="145" width="579" height="534" key="find.popup" timestamp="1614087796016">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="478" y="145" width="579" height="534" key="find.popup/0.0.1536.824@0.0.1536.824" timestamp="1614087796016" />
-    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1615604608081">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1615604608081" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_reproducible_27_database_ascad.coverage" NAME="script_aes_reproducible_27_database_ascad Coverage Results" MODIFIED="1615603826159" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
