@@ -19,7 +19,9 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models" />
+    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models">
+      <change afterPath="$PROJECT_DIR$/docs/index.rst" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -276,7 +278,7 @@
       <workItem from="1635692696076" duration="23000" />
       <workItem from="1635848999660" duration="2262000" />
       <workItem from="1637840094587" duration="2113000" />
-      <workItem from="1638178971766" duration="643000" />
+      <workItem from="1638178971766" duration="1080000" />
     </task>
     <task id="LOCAL-00001" summary="fixes in ensembles">
       <created>1614612585866</created>
@@ -424,7 +426,7 @@
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_custom_callback.coverage" NAME="script_aes_custom_callback Coverage Results" MODIFIED="1615906830264" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_cpa.coverage" NAME="script_aes_cpa Coverage Results" MODIFIED="1616529153396" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_2_database_ascad.coverage" NAME="script_aes_2_database_ascad Coverage Results" MODIFIED="1615566275819" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
-    <SUITE FILE_PATH="coverage/aisy_framework$Docutils_Task_in_readme_rst.coverage" NAME="Docutils Task in readme.rst Coverage Results" MODIFIED="1638179606557" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
+    <SUITE FILE_PATH="coverage/aisy_framework$Docutils_Task_in_readme_rst.coverage" NAME="Docutils Task in readme.rst Coverage Results" MODIFIED="1638179750878" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_neural_network_parameters.coverage" NAME="script_aes_neural_network_parameters Coverage Results" MODIFIED="1615907847955" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_plot_probability_ranks.coverage" NAME="script_aes_plot_probability_ranks Coverage Results" MODIFIED="1614091455260" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes.coverage" NAME="script_aes Coverage Results" MODIFIED="1635853053276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
