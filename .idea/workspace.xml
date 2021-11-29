@@ -66,6 +66,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="TERMINAL_CUSTOM_COMMANDS_GOT_IT" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="ReST" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/docs" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -88,7 +89,7 @@
       <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\commons" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.script_aes">
+  <component name="RunManager" selected="Python docs.Docutils Task in readme.rst">
     <configuration name="script_aes" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="aisy_framework" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -125,28 +126,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/script_aes_cpa.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="script_aes_save_to_npz" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="aisy_framework" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/scripts" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/script_aes_save_to_npz.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -199,13 +178,30 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Docutils Task in readme.rst" type="docs" factoryName="Docutils task" temporary="true">
+      <module name="aisy_framework" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="docutils_input_file" value="$APPLICATION_CONFIG_DIR$/scratches/readme.rst" />
+      <option name="docutils_output_file" value="$APPLICATION_CONFIG_DIR$/scratches/readme.html" />
+      <option name="docutils_params" value="" />
+      <option name="docutils_task" value="rst2html" />
+      <option name="docutils_open_in_browser" value="true" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python docs.Docutils Task in readme.rst" />
         <item itemvalue="Python.script_aes" />
         <item itemvalue="Python.script_aes_cpa" />
         <item itemvalue="Python.script_open_npz_file" />
         <item itemvalue="Python.script_aes_visualization" />
-        <item itemvalue="Python.script_aes_save_to_npz" />
       </list>
     </recent_temporary>
   </component>
@@ -280,7 +276,7 @@
       <workItem from="1635692696076" duration="23000" />
       <workItem from="1635848999660" duration="2262000" />
       <workItem from="1637840094587" duration="2113000" />
-      <workItem from="1638178971766" duration="340000" />
+      <workItem from="1638178971766" duration="643000" />
     </task>
     <task id="LOCAL-00001" summary="fixes in ensembles">
       <created>1614612585866</created>
@@ -428,6 +424,7 @@
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_custom_callback.coverage" NAME="script_aes_custom_callback Coverage Results" MODIFIED="1615906830264" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_cpa.coverage" NAME="script_aes_cpa Coverage Results" MODIFIED="1616529153396" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_2_database_ascad.coverage" NAME="script_aes_2_database_ascad Coverage Results" MODIFIED="1615566275819" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/aisy_framework$Docutils_Task_in_readme_rst.coverage" NAME="Docutils Task in readme.rst Coverage Results" MODIFIED="1638179606557" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_neural_network_parameters.coverage" NAME="script_aes_neural_network_parameters Coverage Results" MODIFIED="1615907847955" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_plot_probability_ranks.coverage" NAME="script_aes_plot_probability_ranks Coverage Results" MODIFIED="1614091455260" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes.coverage" NAME="script_aes Coverage Results" MODIFIED="1635853053276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
