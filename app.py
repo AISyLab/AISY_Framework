@@ -85,9 +85,12 @@ def scripts():
     return "ok"
 
 
-databases_root_folder = "my_path/AISY_framework/resources/databases/"
-datasets_root_folder = "my_dataset_folder/"
-resources_root_folder = "my_path/AISY_framework/resources/"
+# databases_root_folder = "my_path/AISY_framework/resources/databases/"
+# datasets_root_folder = "my_dataset_folder/"
+# resources_root_folder = "my_path/AISY_framework/resources/"
+databases_root_folder = "C:/Users/guilh/PycharmProjects/aisy_framework_2021/resources/databases/"
+datasets_root_folder = "D:/traces/"
+resources_root_folder = "C:/Users/guilh/PycharmProjects/aisy_framework_2021/resources/"
 
 
 @app.route('/tables')

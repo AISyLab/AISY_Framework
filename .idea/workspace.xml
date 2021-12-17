@@ -20,7 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models">
-      <change afterPath="$PROJECT_DIR$/docs/index.rst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/script_aes.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/script_aes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/script_aes_custom_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/script_aes_custom_metrics.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,7 +94,7 @@
       <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\commons" />
     </key>
   </component>
-  <component name="RunManager" selected="Python docs.Docutils Task in readme.rst">
+  <component name="RunManager" selected="Python.script_aes_custom_metrics">
     <configuration name="script_aes" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="aisy_framework" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -136,7 +139,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="script_aes_visualization" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="script_aes_custom_metrics" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="aisy_framework" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -149,7 +152,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/script_aes_visualization.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/script_aes_custom_metrics.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -199,11 +202,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.script_aes_custom_metrics" />
         <item itemvalue="Python docs.Docutils Task in readme.rst" />
         <item itemvalue="Python.script_aes" />
         <item itemvalue="Python.script_aes_cpa" />
         <item itemvalue="Python.script_open_npz_file" />
-        <item itemvalue="Python.script_aes_visualization" />
       </list>
     </recent_temporary>
   </component>
@@ -278,7 +281,16 @@
       <workItem from="1635692696076" duration="23000" />
       <workItem from="1635848999660" duration="2262000" />
       <workItem from="1637840094587" duration="2113000" />
-      <workItem from="1638178971766" duration="1080000" />
+      <workItem from="1638178971766" duration="1668000" />
+      <workItem from="1638350054906" duration="276000" />
+      <workItem from="1638353653526" duration="33000" />
+      <workItem from="1638354181388" duration="158000" />
+      <workItem from="1638355428431" duration="1000" />
+      <workItem from="1638355478775" duration="57000" />
+      <workItem from="1638355721822" duration="147000" />
+      <workItem from="1638369038158" duration="17000" />
+      <workItem from="1638380700451" duration="12000" />
+      <workItem from="1638384614825" duration="971000" />
     </task>
     <task id="LOCAL-00001" summary="fixes in ensembles">
       <created>1614612585866</created>
@@ -434,6 +446,6 @@
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_grid_search.coverage" NAME="script_aes_grid_search Coverage Results" MODIFIED="1615907480833" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_custom_table.coverage" NAME="script_aes_custom_table Coverage Results" MODIFIED="1615906985286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_save_to_npz.coverage" NAME="script_aes_save_to_npz Coverage Results" MODIFIED="1615908547846" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
-    <SUITE FILE_PATH="coverage/aisy_framework$script_aes_custom_metrics.coverage" NAME="script_aes_custom_metrics Coverage Results" MODIFIED="1615906859289" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/aisy_framework$script_aes_custom_metrics.coverage" NAME="script_aes_custom_metrics Coverage Results" MODIFIED="1638355804988" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
   </component>
 </project>
