@@ -4,6 +4,14 @@ datasets_dict = {
         "key": "4DFBE0F27221FE10A78D4ADC8E490469",
         "first_sample": 0,
         "number_of_samples": 700,
+        "number_of_profiling_traces": 500000,
+        "number_of_attack_traces": 10000
+    },
+    "ASCAD_desync50.h5": {
+        "filename": "ASCAD_desync50.h5",
+        "key": "4DFBE0F27221FE10A78D4ADC8E490469",
+        "first_sample": 0,
+        "number_of_samples": 700,
         "number_of_profiling_traces": 50000,
         "number_of_attack_traces": 10000
     },
@@ -12,8 +20,16 @@ datasets_dict = {
         "key": "00112233445566778899AABBCCDDEEFF",
         "first_sample": 0,
         "number_of_samples": 1400,
-        "number_of_profiling_traces": 100000,
-        "number_of_attack_traces": 2000
+        "number_of_profiling_traces": 200000,
+        "number_of_attack_traces": 4000
+    },
+    "ascad-variable-desync50.h5": {
+        "filename": "ascad-variable-desync50.h5",
+        "key": "00112233445566778899AABBCCDDEEFF",
+        "first_sample": 0,
+        "number_of_samples": 1400,
+        "number_of_profiling_traces": 200000,
+        "number_of_attack_traces": 4000
     },
     "ches_ctf.h5": {
         "filename": "ches_ctf.h5",

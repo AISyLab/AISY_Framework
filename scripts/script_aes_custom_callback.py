@@ -13,19 +13,19 @@ aisy.set_batch_size(400)
 aisy.set_epochs(10)
 aisy.set_neural_network(mlp)
 
-param1 = [1, 2, 3]
-param2 = "my_string"
-
 custom_callbacks = [
     {
         "class": "custom.custom_callbacks.callbacks.CustomCallback1",
         "name": "CustomCallback1",
-        "parameters": [param1, param2]
+        "parameters": {
+            "param1": [1, 2, 3],
+            "param2": "my_string"
+        }
     },
     {
         "class": "custom.custom_callbacks.callbacks.CustomCallback2",
         "name": "CustomCallback2",
-        "parameters": []
+        "parameters": {}
     }
 ]
 

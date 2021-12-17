@@ -19,6 +19,6 @@ aisy.run()
 start_custom_tables(databases_root_folder + "database_ascad.sqlite")
 session = start_custom_tables_session(databases_root_folder + "database_ascad.sqlite")
 
-new_insert = CustomTable(value1=10, value2=20, value3=30, analysis_id=aisy.get_analysis_id())
+new_insert = CustomTable(value1=10, value2=20, value3=30, analysis_id=aisy.settings["analysis_id"])
 session.add(new_insert)
 session.commit()

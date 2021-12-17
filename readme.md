@@ -38,8 +38,10 @@ See our documentation page: https://aisylab.github.io/AISY_docs/
 - Random Search
 - Early Stopping
 - Ensemble
+- Profiling Analyzer  
 - Custom Metrics
 - Custom Callbacks
+- Custom Loss Functions  
 - Confusion Matrix
 - Easy Neural Network Definitions
 - Data Augmentation
