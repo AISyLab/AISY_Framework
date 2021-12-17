@@ -2,17 +2,13 @@ from flask import Flask, render_template
 from aisy_database.db_select import *
 from aisy_database.db_delete import *
 from custom.custom_datasets.datasets import *
-from webapp.mvc.controllers.generate_script import generate_script
+from webapp.mvc.controllers.script_controller import *
 from webapp.mvc.views import views
-from webapp.mvc.views import plotly
+from webapp.mvc.controllers.app_controller import AppController
+from webapp.mvc.controllers.figures_controller import FigureController
 import os
-import time
-import pytz
-import h5py
 import numpy as np
-from datetime import datetime
 import flaskcode
-import hiplot as hip
 import matplotlib.pyplot as plt
 import dash
 import dash_html_components as html
@@ -26,6 +22,7 @@ app = Flask(__name__,
 app.jinja_env.auto_reload = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config.from_object(flaskcode.default_config)
+
 app.config['FLASKCODE_RESOURCE_BASEPATH'] = 'scripts'
 app.register_blueprint(flaskcode.blueprint, url_prefix='/scripts')
 
@@ -61,6 +58,38 @@ dash_app_accuracy = dash.Dash(
 )
 dash_app_accuracy.layout = html.Div(children=[])
 
+dash_app_profiling_analyzer_ge = dash.Dash(
+    __name__,
+    server=app,
+    routes_pathname_prefix='/dash/profiling_analyzer_ge/',
+    external_stylesheets=[dbc.themes.CERULEAN]
+)
+dash_app_profiling_analyzer_ge.layout = html.Div(children=[])
+
+dash_app_profiling_analyzer_sr = dash.Dash(
+    __name__,
+    server=app,
+    routes_pathname_prefix='/dash/profiling_analyzer_sr/',
+    external_stylesheets=[dbc.themes.CERULEAN]
+)
+dash_app_profiling_analyzer_sr.layout = html.Div(children=[])
+
+dash_app_profiling_analyzer_nt = dash.Dash(
+    __name__,
+    server=app,
+    routes_pathname_prefix='/dash/profiling_analyzer_nt/',
+    external_stylesheets=[dbc.themes.CERULEAN]
+)
+dash_app_profiling_analyzer_nt.layout = html.Div(children=[])
+
+dash_app_visualization = dash.Dash(
+    __name__,
+    server=app,
+    routes_pathname_prefix='/dash/visualization/',
+    external_stylesheets=[dbc.themes.CERULEAN]
+)
+dash_app_visualization.layout = html.Div(children=[])
+
 
 @app.before_request
 def before_request():
@@ -85,198 +114,75 @@ def scripts():
     return "ok"
 
 
-# databases_root_folder = "my_path/AISY_framework/resources/databases/"
-# datasets_root_folder = "my_dataset_folder/"
-# resources_root_folder = "my_path/AISY_framework/resources/"
 databases_root_folder = "C:/Users/guilh/PycharmProjects/aisy_framework_2021/resources/databases/"
 datasets_root_folder = "D:/traces/"
-resources_root_folder = "C:/Users/guilh/PycharmProjects/aisy_framework_2021/resources/"
+resources_root_folder = "C:\\Users\\guilh\\PycharmProjects\\aisy_framework_2021\\resources\\"
 
 
-@app.route('/tables')
-def table():
-    db_files = []
-    # r=root, d=directories, f = files
-    for r, d, f in os.walk(databases_root_folder):
-        for file in f:
-            if file.endswith(".sqlite"):
-                db_files.append(file)
-
-    all_tables = []
-    all_tables_names = []
-
-    for db_file in db_files:
-
-        if os.path.exists(databases_root_folder + db_file):
-
-            db_select = DBSelect(databases_root_folder + db_file)
-            analysis_all = db_select.select_all(Analysis)
-            analyses = []
-
-            for analysis in analysis_all:
-                if not analysis.deleted:
-                    localtimezone = pytz.timezone(os.getenv("TIME_ZONE"))
-                    analysis_datetime = datetime.strptime(str(analysis.datetime), "%Y-%m-%d %H:%M:%S.%f").astimezone(
-                        localtimezone).__format__(
-                        "%b %d, %Y %H:%M:%S")
-
-                    key_ranks = db_select.select_key_ranks_from_analysis(KeyRank, analysis.id)
-                    success_rates = db_select.select_success_rates_from_analysis(SuccessRate, analysis.id)
-                    neural_network = db_select.select_from_analysis(NeuralNetwork, analysis.id)
-                    leakage_model = db_select.select_from_analysis(LeakageModel, analysis.id)
-
-                    analyses.append({
-                        "id": analysis.id,
-                        "datetime": analysis_datetime,
-                        "dataset": analysis.dataset,
-                        "settings": analysis.settings,
-                        "elapsed_time": time.strftime('%H:%M:%S', time.gmtime(analysis.elapsed_time)),
-                        "key_ranks": key_ranks,
-                        "success_rates": success_rates,
-                        "leakage_model": leakage_model,
-                        "neural_network_name": "not ready" if neural_network is None else neural_network.model_name
-                    })
-
-            all_tables.append(analyses)
-            all_tables_names.append(db_file)
-
+@app.route('/databases')
+def databases():
+    app_controller = AppController()
+    all_tables, all_tables_names = app_controller.get_databases_tables(databases_root_folder)
     return render_template("tables.html", all_tables=all_tables, all_tables_names=all_tables_names)
 
 
 @app.route('/search/<string:table_name>')
 def search(table_name):
-    if os.path.exists(databases_root_folder + table_name):
+    app_controller = AppController()
+    analyses = app_controller.get_search(databases_root_folder, table_name)
 
-        db_select = DBSelect(databases_root_folder + table_name)
-        analysis_all = db_select.select_all(Analysis)
-        analyses = []
-
-        hp = []
-
-        for analysis in analysis_all:
-
-            final_key_ranks = db_select.select_key_ranks_from_analysis(KeyRank, analysis.id)
-
-            if len(final_key_ranks) > 0:
-                hyper_parameters = db_select.select_from_analysis(HyperParameter, analysis.id)
-                training_hyper_parameters = hyper_parameters.hyper_parameters
-                training_hyper_parameters[0]['guessing_entropy'] = final_key_ranks[0][0]['key_rank']
-                hp.append(training_hyper_parameters[0])
-
-        exp = hip.Experiment().from_iterable(hp)
-        exp.display_data(hip.Displays.PARALLEL_PLOT).update({
-            'hide': ['uid', 'key_rank', 'key'],  # Hide some columns
-            'order': ['guessing_entropy'],  # Put column time first on the left
-        })
-        exp.validate()
-        exp.to_html("webapp/templates/hiplot.html")
-
-        return render_template("dashboard/search.html", analyses=analyses)
-    return render_template("dashboard/search.html", analyses=[])
+    return render_template("dashboard/search.html", analyses=analyses)
 
 
 @app.route('/result/<int:analysis_id>/<string:table_name>')
 def result(analysis_id, table_name):
     db_select = DBSelect(databases_root_folder + table_name)
 
-    # get neural network information from database
     analysis = db_select.select_analysis(Analysis, analysis_id)
 
-    all_metric_plots = views.metric_plots(analysis.id, db_select)
-
-    all_accuracy_plots = views.accuracy_plots(analysis.id, db_select)
+    all_metric_plots = []
+    if analysis.settings["use_early_stopping"]:
+        for metric in analysis.settings["early_stopping"]["metrics"]:
+            all_metric_plots = views.metric_early_stopping_plots(all_metric_plots, analysis.id, db_select, metric)
+    if analysis.settings["use_bayesian_optimization"]:
+        if analysis.settings["bayesian_optimization"]["metric"] == "guessing_entropy":
+            all_metric_plots = views.metric_early_stopping_plots(all_metric_plots, analysis.id, db_select, "guessing_entropy")
+    all_accuracy_plots = views.metric_plots(analysis.id, db_select, "accuracy", "Accuracy")
     dash_app_accuracy.layout = html.Div(children=[all_accuracy_plots])
-    all_loss_plots = views.loss_plots(analysis.id, db_select)
+    all_loss_plots = views.metric_plots(analysis.id, db_select, "loss", "Loss")
     dash_app_loss.layout = html.Div(children=[all_loss_plots])
-    if "ensemble" in analysis.settings:
-        all_key_rank_plots = views.ensemble_plots_key_rank(analysis.id, db_select)
-    else:
-        all_key_rank_plots = views.key_rank_plots(analysis.id, db_select)
+    all_key_rank_plots = views.metric_plots(analysis.id, db_select, "Guessing Entropy", "Guessing Entropy")
     dash_app_key_ranks.layout = html.Div(children=[all_key_rank_plots])
-    if "ensemble" in analysis.settings:
-        all_success_rate_plots = views.ensemble_plots_success_rate(analysis.id, db_select)
-    else:
-        all_success_rate_plots = views.success_rate_plots(analysis.id, db_select)
+    all_success_rate_plots = views.metric_plots(analysis.id, db_select, "Success Rate", "Success Rate")
     dash_app_success_rates.layout = html.Div(children=[all_success_rate_plots])
 
-    # get training hyper-parameters information from database
+    if analysis.settings["use_profiling_analyzer"]:
+        all_profiling_analyzer_plots_ge = views.metric_profiling_analyzer_plots(analysis.id, db_select, "Guessing Entropy",
+                                                                                "Guessing Entropy")
+        all_profiling_analyzer_plots_sr = views.metric_profiling_analyzer_plots(analysis.id, db_select, "Success Rate", "Success Rate")
+        all_profiling_analyzer_plots_nt = views.metric_profiling_analyzer_plots(analysis.id, db_select, "Number of Attack Traces",
+                                                                                "Number of Attack Traces")
+        dash_app_profiling_analyzer_ge.layout = html.Div(children=[all_profiling_analyzer_plots_ge])
+        dash_app_profiling_analyzer_sr.layout = html.Div(children=[all_profiling_analyzer_plots_sr])
+        dash_app_profiling_analyzer_nt.layout = html.Div(children=[all_profiling_analyzer_plots_nt])
+
+    app_controller = AppController()
+    all_visualization_plots, all_visualization_heatmap_plots = app_controller.get_visualization_plots(db_select, analysis_id)
+    if "visualization" in analysis.settings:
+        dash_app_visualization.layout = all_visualization_plots
+    training_settings = app_controller.get_training_settings(analysis)
     hyper_parameters = db_select.select_all_from_analysis(HyperParameter, analysis_id)
-    training_hyper_parameters = []
-    hyper_parameters_table = []
-    for i, hp in enumerate(hyper_parameters):
-        training_hyper_parameters.append(hp.hyper_parameters)
+    hyper_parameters_table = app_controller.get_hyperparameter_table(hyper_parameters, analysis)
 
-        hp_struct = {}
-
-        filter_list = []
-        stride_list = []
-        kernel_list = []
-        pooling_type_list = []
-        pooling_size_list = []
-        pooling_stride_list = []
-
-        if "conv_layers" in hp.hyper_parameters[0]:
-            conv_layers = hp.hyper_parameters[0]["conv_layers"]
-        else:
-            conv_layers = 0
-
-        for hp_key in hp.hyper_parameters[0]:
-            if "filter" in hp_key and len(filter_list) < conv_layers:
-                filter_list.append(hp.hyper_parameters[0][hp_key])
-            elif "pooling_type" in hp_key and len(pooling_type_list) < conv_layers:
-                pooling_type_list.append(hp.hyper_parameters[0][hp_key])
-            elif "pooling_size" in hp_key and len(pooling_size_list) < conv_layers:
-                pooling_size_list.append(hp.hyper_parameters[0][hp_key])
-            elif "pooling_stride" in hp_key and len(pooling_stride_list) < conv_layers:
-                pooling_stride_list.append(hp.hyper_parameters[0][hp_key])
-            elif "stride" in hp_key and len(stride_list) < conv_layers:
-                stride_list.append(hp.hyper_parameters[0][hp_key])
-            elif "kernel" in hp_key and len(kernel_list) < conv_layers:
-                kernel_list.append(hp.hyper_parameters[0][hp_key])
-            else:
-                hp_struct[str(hp_key)] = hp.hyper_parameters[0][hp_key]
-
-        if len(filter_list) > 0:
-            hp_struct["filters"] = filter_list
-        if len(stride_list) > 0:
-            hp_struct["strides"] = stride_list
-        if len(kernel_list) > 0:
-            hp_struct["kernels"] = kernel_list
-        if len(pooling_type_list):
-            hp_struct["pooling_types"] = pooling_type_list
-        if len(pooling_size_list) > 0:
-            hp_struct["pooling_sizes"] = pooling_size_list
-        if len(pooling_stride_list) > 0:
-            hp_struct["pooling_strides"] = pooling_stride_list
-        hp_struct["id"] = hp.id
-        hyper_parameters_table.append(hp_struct)
-
-    # get neural network information from database
     neural_network_model = db_select.select_from_analysis(NeuralNetwork, analysis_id)
 
     neural_network_description = None
-    hyper_parameter_search = []
-    if len(hyper_parameters) > 1:
-        hyper_parameter_search = db_select.select_from_analysis(HyperParameterSearch, analysis.id)
-        if neural_network_model is not None:
-            neural_network_description = {}
-            model_description = json.loads(neural_network_model.description)
-            print(model_description['0'])
-            for k, v in model_description.items():
-                neural_network_description[k] = v
-    else:
-        if neural_network_model is not None:
-            neural_network_description = neural_network_model.description
+    if neural_network_model is not None:
+        neural_network_description = neural_network_model.description
 
-    # get leakage model information from database
     leakage_model = db_select.select_from_analysis(LeakageModel, analysis_id)
     leakage_model_parameters = leakage_model.leakage_model
 
-    # get visualization plots
-    all_visualization_plots = views.visualization_plots(analysis.id, db_select)
-    all_visualization_heatmap_plots = views.visualization_plots_heatmap(analysis.id, db_select)
-
-    # confusion matrix plot
     all_confusion_matrix_plots = views.confusion_matrix_plots(analysis.id, db_select)
 
     return render_template("dashboard/result.html",
@@ -284,149 +190,64 @@ def result(analysis_id, table_name):
                            all_key_rank_plots=all_key_rank_plots,
                            all_success_rate_plots=all_success_rate_plots,
                            neural_network_description=neural_network_description,
-                           training_hyper_parameters=training_hyper_parameters,
-                           hyper_parameters=hyper_parameters,
+                           training_settings=training_settings,
                            hyper_parameters_table=hyper_parameters_table,
-                           hyper_parameter_search=hyper_parameter_search,
                            leakage_model_parameters=leakage_model_parameters,
-                           all_visualization_plots=all_visualization_plots,
                            all_visualization_heatmap_plots=all_visualization_heatmap_plots,
                            all_confusion_matrix_plots=all_confusion_matrix_plots,
                            analysis=analysis)
 
 
-@app.route('/datasets')
-def datasets():
-    all_plots = []
-
-    for ds in datasets_dict:
-        in_file = h5py.File(datasets_root_folder + ds, "r")
-        profiling_samples = np.array(in_file['Profiling_traces/traces'], dtype=np.float64)
-
-        all_plots.append({
-            "title": ds,
-            "layout_plotly": plotly.get_plotly_layout("Samples", "Amplitude (mV)"),
-            "plots": plotly.create_line_plot(y=profiling_samples[0], line_name=ds)
-        })
-
-    return render_template("dashboard/datasets.html", all_plots=all_plots)
+@app.route('/documentation')
+def documentation():
+    return render_template("dashboard/documentation.html")
 
 
-@app.route("/generate_script/<int:analysis_id>/<string:table_name>/<reproducible>/<from_db>")
-def gen_script(analysis_id, table_name, reproducible, from_db):
-    if reproducible == "true":
-        if from_db == "true":
-            generate_script("script_aes_{}_db_based_reproducible".format(analysis_id), databases_root_folder, table_name, analysis_id, True,
-                            True)
-        else:
-            generate_script("script_aes_{}_reproducible".format(analysis_id), databases_root_folder, table_name, analysis_id, True, False)
-    else:
-        generate_script("script_aes_{}".format(analysis_id), databases_root_folder, table_name, analysis_id, False, False)
+@app.route("/generate_reproducible_script/<int:analysis_id>/<string:table_name>")
+def generate_reproducible_script(analysis_id, table_name):
+    write_reproducible_script(f"script_reproducible_{analysis_id}", databases_root_folder, table_name, analysis_id)
+    return "ok"
+
+
+@app.route("/generate_fully_reproducible_script/<int:analysis_id>/<string:table_name>")
+def generate_fully_reproducible_script(analysis_id, table_name):
+    write_fully_reproducible_script(f"script_fully_reproducible_{analysis_id}", databases_root_folder, table_name, analysis_id)
+    write_fully_reproducible_script(f"script_fully_reproducible_from_db_{analysis_id}", databases_root_folder, table_name, analysis_id,
+                                    from_db=True)
     return "ok"
 
 
 @app.route("/generate_plot/<int:analysis_id>/<string:table_name>/<metric>")
 def gen_plot(analysis_id, table_name, metric):
-    db_select = DBSelect(databases_root_folder + table_name)
-
-    analysis = db_select.select_analysis(Analysis, analysis_id)
-    hyper_parameters = db_select.select_all_from_analysis(HyperParameter, analysis_id)
-    best_epoch_metric = []
-
-    if metric == "Guessing_Entropy":
-        result_key_byte = db_select.select_key_ranks_from_analysis(KeyRank, analysis_id)
-    elif metric == "Success_Rate":
-        result_key_byte = db_select.select_success_rates_from_analysis(SuccessRate, analysis_id)
-    else:
-        result_key_byte = []
-        all_metrics_names = db_select.select_metric_names_from_analysis(Metric, analysis_id)
-
-        if metric == "accuracy":
-            for metric_name in all_metrics_names:
-                if metric in metric_name:
-                    if "grid_search" in analysis.settings or "random_search" in analysis.settings:
-                        if "best" in metric_name:
-                            result_key_byte.append(db_select.select_metric_from_analysis(Metric, metric_name, analysis_id)[0])
-                    else:
-                        result_key_byte.append(db_select.select_metric_from_analysis(Metric, metric_name, analysis_id)[0])
-        elif metric == "loss":
-            for metric_name in all_metrics_names:
-                if metric in metric_name:
-                    if "grid_search" in analysis.settings or "random_search" in analysis.settings:
-                        if "best" in metric_name:
-                            result_key_byte.append(db_select.select_metric_from_analysis(Metric, metric_name, analysis_id)[0])
-                    else:
-                        result_key_byte.append(db_select.select_metric_from_analysis(Metric, metric_name, analysis_id)[0])
-        else:
-            if "Best Epochs" in metric:
-                metric = metric.replace("ES ", "")
-                metric = metric.replace("Best Epochs ", "")
-                for m in range(len(hyper_parameters) - 1):
-                    if "early_stopping" in analysis.settings:
-                        metric_value = db_select.select_metric_from_analysis(Metric, "{} {}".format(metric, m), analysis_id)[0]
-                        if analysis.settings["early_stopping"]["metrics"][metric.replace("val_", "")]["direction"] == "max":
-                            best_epoch_metric.append(np.argmax(metric_value['values']) + 1)
-                        else:
-                            best_epoch_metric.append(np.argmin(metric_value['values']) + 1)
-            else:
-                if len(hyper_parameters) > 1:
-                    metric = metric.replace("ES ", "")
-                    for m in range(len(hyper_parameters)):
-                        if m == len(hyper_parameters) - 1:
-                            result_key_byte.append(db_select.select_metric_from_analysis(Metric, "{} best".format(metric), analysis_id)[0])
-                        else:
-                            result_key_byte.append(db_select.select_metric_from_analysis(Metric, "{} {}".format(metric, m), analysis_id)[0])
-                else:
-                    metric = metric.replace("ES ", "")
-                    result_key_byte.append(db_select.select_metric_from_analysis(Metric, metric, analysis_id)[0])
-
-    my_dpi = 100
-    plt.figure(figsize=(800 / my_dpi, 600 / my_dpi), dpi=my_dpi)
-    dir_analysis_id = "resources/figures/{}".format(analysis_id)
+    dir_analysis_id = f"{resources_root_folder}figures/{table_name}_{analysis_id}"
     if not os.path.exists(dir_analysis_id):
         os.makedirs(dir_analysis_id)
-    if metric == "Guessing_Entropy" or metric == "Success_Rate":
-        for res in result_key_byte:
-            if "Best" in res['label'] or "Ensemble" in res['label'] or "Attack" in res['label']:
-                plt.grid(ls='--')
-                plt.plot(np.arange(res['report_interval'], (len(res['values']) + 1) * res['report_interval'], res['report_interval']),
-                         res['values'],
-                         label=res['label'])
-                plt.legend(loc='best', fontsize=13)
-                plt.xlim([1, len(res['values']) * res['report_interval']])
-                plt.ylabel(metric.replace("_", " "), fontsize=13)
-                if metric == "Guessing_Entropy" or metric == "Success_Rate":
-                    plt.xlabel("Attack Traces", fontsize=13)
-                else:
-                    plt.xlabel("Epochs", fontsize=13)
-        plt.savefig("{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")), format="png")
-    else:
-        if len(best_epoch_metric) > 0:
-            max_number_of_epochs = hyper_parameters[0].hyper_parameters[0]['epochs']
-            for hp in hyper_parameters:
-                if hp.hyper_parameters[0]['epochs'] > max_number_of_epochs:
-                    max_number_of_epochs = hp.hyper_parameters[0]['epochs']
-            metric = "Best epochs {}".format(metric.replace("ES ", ""))
-            plt.hist(best_epoch_metric, label=metric, bins=hyper_parameters[0].hyper_parameters[0]['epochs'])
-            plt.legend(loc='best', fontsize=13)
-            plt.ylabel("Frequency", fontsize=13)
-            plt.xlabel("Epochs", fontsize=13)
-            plt.grid(ls='--')
-            plt.savefig("{}/best_epochs_{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")),
-                        format="png")
-        else:
-            for res in result_key_byte:
-                if len(hyper_parameters) == 1 or "best" in res['label']:
-                    plt.plot(np.arange(1, len(res['values']) + 1, 1), res['values'], label=res['label'])
-                    plt.legend(loc='best', fontsize=13)
-                else:
-                    plt.plot(np.arange(1, len(res['values']) + 1, 1), res['values'], color="grey", linestyle="--", linewidth=1.0)
-                plt.xlim([1, len(res['values'])])
-                plt.ylabel(metric.replace("_", " "), fontsize=13)
-                plt.xlabel("Epochs", fontsize=13)
-                plt.grid(ls='--')
-            plt.savefig("{}/{}_{}_{}.png".format(dir_analysis_id, metric, analysis_id, table_name.replace(".sqlite", "")), format="png")
 
+    db_select = DBSelect(databases_root_folder + table_name)
+    figure_controller = FigureController(dir_analysis_id, analysis_id, db_select)
+
+    if metric == "accuracy":
+        figure_controller.save_accuracy_plot()
+    if metric == "loss":
+        figure_controller.save_loss_plot()
+    if metric == "guessing_entropy":
+        figure_controller.save_guessing_entropy_plot()
+    if metric == "success_rate":
+        figure_controller.save_success_rate_plot()
+    if metric == "visualization":
+        hyper_parameters = db_select.select_all_from_analysis(HyperParameter, analysis_id)
+        for hp in hyper_parameters:
+            figure_controller.save_visualization_plot(hp.id)
+    if metric == "visualization_heatmap":
+        hyper_parameters = db_select.select_all_from_analysis(HyperParameter, analysis_id)
+        for hp in hyper_parameters:
+            figure_controller.save_visualization_heatmap_plot(hp.id)
+    if metric == "pa_guessing_entropy":
+        figure_controller.save_profiling_analyzer_guessing_entropy_plot()
+    if metric == "pa_success_rate":
+        figure_controller.save_profiling_analyzer_success_rate_plot()
+    if metric == "pa_number_of_traces":
+        figure_controller.save_profiling_analyzer_number_of_traces_plot()
     return "ok"
 
 
@@ -444,3 +265,7 @@ if __name__ == '__main__':
     dash_app_loss.run_server(debug=True)
     dash_app_key_ranks.run_server(debug=True)
     dash_app_success_rates.run_server(debug=True)
+    dash_app_profiling_analyzer_ge.run_server(debug=True)
+    dash_app_profiling_analyzer_sr.run_server(debug=True)
+    dash_app_profiling_analyzer_nt.run_server(debug=True)
+    dash_app_visualization.run_server(debug=True)

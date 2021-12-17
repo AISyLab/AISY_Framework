@@ -6,14 +6,18 @@ import json
 import dash_core_components as dcc
 
 
-def create_line_plot_dash(data, x_axis_title, y_axis_title):
+def create_line_plot_dash(data, x_axis_title, y_axis_title, x_range=None):
     return dcc.Graph(id='timeseries',
                      config={'displayModeBar': False},
                      animate=True,
                      figure={
                          'data': data,
-                         'layout': get_plotly_layout(x_axis_title, y_axis_title)
+                         'layout': get_plotly_layout(x_axis_title, y_axis_title, x_range=x_range)
                      })
+
+
+def create_scatter_and_line_plot_dash(fig):
+    return dcc.Graph(figure=fig)
 
 
 def create_line_plot(x=None, y=None, line_name=None, line_color=None, line_width=1.5, show_legend=True):
@@ -38,6 +42,30 @@ def create_line_plot(x=None, y=None, line_name=None, line_color=None, line_width
     return json.dumps([data_line], cls=plotly.utils.PlotlyJSONEncoder)
 
 
+def create_line_plot_fill(x=None, y=None, line_name=None, line_color=None, line_width=1.5, show_legend=True):
+    if x is None:
+        x = np.arange(1, len(y) + 1, 1)
+
+    df = pd.DataFrame({'x': x, 'y': y})  # creating a sample dataframe
+    data_line = go.Line(
+        x=df['x'],  # assign x as the dataframe column 'x'
+        y=df['y'],
+        line={
+            'width': line_width
+        },
+        showlegend=show_legend,
+        fill="tozerox",
+        fillcolor="rgba(230,230,230,0.3)",
+    )
+
+    if line_name is not None:
+        data_line['name'] = line_name
+    if line_color is not None:
+        data_line['line']['color'] = line_color
+
+    return json.dumps([data_line], cls=plotly.utils.PlotlyJSONEncoder)
+
+
 def create_hist_plot(x=None, line_name="line_plot"):
     data = [go.Histogram(
         x=x,
@@ -49,7 +77,7 @@ def create_hist_plot(x=None, line_name="line_plot"):
     return json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-def get_plotly_layout(x_axis_title, y_axis_title):
+def get_plotly_layout(x_axis_title, y_axis_title, x_range=None):
     layout = {
         "annotations": [],
         "font": {
@@ -63,7 +91,8 @@ def get_plotly_layout(x_axis_title, y_axis_title):
             "title": x_axis_title,
             "tickcolor": '#fff',
             "gridcolor": '#d0d0d0',
-            "color": '#263238'
+            "color": '#263238',
+            "range": [x_range[0], x_range[1]] if x_range is not None else '',
         },
         "yaxis": {
             "ticks": '',
@@ -90,7 +119,6 @@ def get_layout_density(x_axis_title, y_axis_title):
         },
         "showlegend": True,
         "autosize": True,
-        # "height": 550,
         "paper_bgcolor": '#fafafa',
         "plot_bgcolor": '#fafafa',
         'shapes': [],
@@ -117,7 +145,7 @@ def get_layout_density(x_axis_title, y_axis_title):
             "color": '#263238'
         },
         "bargap": 0.0,
-        "bargroupgap": 0.1
+        "bargroupgap": 0.1,
     }
 
     return layout

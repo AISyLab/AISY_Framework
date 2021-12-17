@@ -30,7 +30,7 @@
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>Analysis ID</th>
                                 <th>Dataset</th>
                                 <th>Datetime</th>
                                 <th>Key Rank</th>
@@ -42,7 +42,7 @@
                             <tbody>
                             {% for analysis in analyses %}
                                 <tr>
-                                    <td>{{ analysis.id }}</td>
+                                    <td>{{ analysis.analysis_id }}</td>
                                     <td>{{ analysis.dataset }}</td>
                                     <td>{{ analysis.datetime }}</td>
                                     <td style="padding: 0px;">
@@ -78,11 +78,11 @@
                                     <td>{{ analysis.elapsed_time }}</td>
                                     <td>{{ analysis.neural_network_name }}</td>
                                     <td style="font-size: 20px !important;">
-                                        <a href="{{ url_for('result', analysis_id=analysis.id, table_name=all_tables_names[tableloop.index - 1]) }}">
+                                        <a href="{{ url_for('result', analysis_id=analysis.analysis_id, table_name=all_tables_names[tableloop.index - 1]) }}">
                                             <i class="fas fa-fw fa-chart-area text-dark"></i>
                                         </a>
                                         <a style="cursor: pointer" data-toggle="modal" data-target="#delete_analysis_modal"
-                                           onclick='set_analysis_to_delete({{ analysis.id }}, "{{ all_tables_names[tableloop.index - 1] }}")'>
+                                           onclick='set_analysis_to_delete({{ analysis.analysis_id }}, "{{ all_tables_names[tableloop.index - 1] }}")'>
                                             <i class="fas fa-fw fa-trash text-danger"></i>
                                         </a>
                                     </td>
