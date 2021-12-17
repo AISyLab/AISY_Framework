@@ -52,13 +52,10 @@ def metric_early_stopping_plots(all_metric_plots, analysis_id, db_select, metric
             metric_plots[metric].append(create_line_plot(y=elem['values'], line_name=elem['label'], line_color=line_color,
                                                          line_width=line_width, show_legend=show_legend))
 
-            if analysis.settings["use_bayesian_optimization"]:
-                best_epoch_metric.append(np.argmin(elem['values']) + 1)
+            if analysis.settings["early_stopping"]["metrics"][metric]["direction"] == "max":
+                best_epoch_metric.append(np.argmax(elem['values']) + 1)
             else:
-                if analysis.settings["early_stopping"]["metrics"][metric]["direction"] == "max":
-                    best_epoch_metric.append(np.argmax(elem['values']) + 1)
-                else:
-                    best_epoch_metric.append(np.argmin(elem['values']) + 1)
+                best_epoch_metric.append(np.argmin(elem['values']) + 1)
 
     histogram_best_epoch_metric_plots.append(
         create_hist_plot(x=best_epoch_metric, line_name=f"Best Epochs {metric}")

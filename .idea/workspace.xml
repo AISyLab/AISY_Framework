@@ -20,30 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models">
-      <change afterPath="$PROJECT_DIR$/custom/custom_loss/cce.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/custom/custom_loss/cer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/custom/custom_metrics/fast_guessing_entropy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_callbacks/callbacks.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_callbacks/callbacks.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_datasets/datasets.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_datasets/datasets.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/accuracy.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/accuracy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/guessing_entropy.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/guessing_entropy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/loss.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/number_of_traces.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_metrics/number_of_traces.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_metrics/success_rate.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/custom/custom_models/neural_networks.py" beforeDir="false" afterPath="$PROJECT_DIR$/custom/custom_models/neural_networks.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/index.rst" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/script_aes_cpa.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/script_aes_custom_callback.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/script_aes_custom_callback.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/script_aes_custom_table.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/script_aes_custom_table.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/script_aes_grid_search.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/script_aes_grid_search.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/script_aes_lth.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/script_aes_plot_probability_ranks.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/script_aes_custom_loss.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/script_aes_random_search.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/script_aes_random_search.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/script_aes_save_to_npz.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/script_aes_profiling_analyzer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/script_open_npz_file.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/mvc/views/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/mvc/views/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,8 +84,10 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\scripts" />
-      <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\custom" />
-      <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\docs" />
+      <recent name="C:\Users\guilh\PycharmProjects\aisy_framework" />
+      <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\webapp\templates\dashboard" />
+      <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\webapp\templates" />
+      <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\webapp\mvc\views" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\scripts" />
@@ -115,7 +96,29 @@
       <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\commons" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.script_aes_custom_metrics">
+  <component name="RunManager" selected="Python.script_aes_multi_model">
+    <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="aisy_framework" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="script_aes" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="aisy_framework" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -130,28 +133,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/script_aes.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="script_aes_cpa" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="aisy_framework" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/scripts" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/script_aes_cpa.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -182,7 +163,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="script_open_npz_file" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="script_aes_multi_model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="aisy_framework" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -195,7 +176,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/script_open_npz_file.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/script_aes_multi_model.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -223,11 +204,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.script_aes_multi_model" />
+        <item itemvalue="Python.app" />
         <item itemvalue="Python.script_aes_custom_metrics" />
         <item itemvalue="Python docs.Docutils Task in readme.rst" />
         <item itemvalue="Python.script_aes" />
-        <item itemvalue="Python.script_aes_cpa" />
-        <item itemvalue="Python.script_open_npz_file" />
       </list>
     </recent_temporary>
   </component>
@@ -312,7 +293,8 @@
       <workItem from="1638369038158" duration="17000" />
       <workItem from="1638380700451" duration="12000" />
       <workItem from="1638384614825" duration="971000" />
-      <workItem from="1639746822190" duration="931000" />
+      <workItem from="1639746822190" duration="1222000" />
+      <workItem from="1639748242958" duration="444000" />
     </task>
     <task id="LOCAL-00001" summary="fixes in ensembles">
       <created>1614612585866</created>
@@ -443,6 +425,7 @@
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_46_reproducible_database_ascad.coverage" NAME="script_aes_46_reproducible_database_ascad Coverage Results" MODIFIED="1615609328167" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_37_reproducible_database_ascad.coverage" NAME="script_aes_37_reproducible_database_ascad Coverage Results" MODIFIED="1615607584669" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_1_reproducible_database_ascad.coverage" NAME="script_aes_1_reproducible_database_ascad Coverage Results" MODIFIED="1615653393422" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/aisy_framework$app.coverage" NAME="app Coverage Results" MODIFIED="1639748276337" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_implicit_gradient_regularization.coverage" NAME="script_aes_implicit_gradient_regularization Coverage Results" MODIFIED="1615135299324" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_36_db_based_reproducible_database_ascad.coverage" NAME="script_aes_36_db_based_reproducible_database_ascad Coverage Results" MODIFIED="1615606830844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_open_npz_file.coverage" NAME="script_open_npz_file Coverage Results" MODIFIED="1615908675134" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
@@ -450,6 +433,7 @@
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_40_reproducible_database_ascad.coverage" NAME="script_aes_40_reproducible_database_ascad Coverage Results" MODIFIED="1615607412406" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_reproducible_24_database_ascad.coverage" NAME="script_aes_reproducible_24_database_ascad Coverage Results" MODIFIED="1615603051774" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_48_reproducible_database_ascad.coverage" NAME="script_aes_48_reproducible_database_ascad Coverage Results" MODIFIED="1615609526217" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
+    <SUITE FILE_PATH="coverage/aisy_framework$script_aes_multi_model.coverage" NAME="script_aes_multi_model Coverage Results" MODIFIED="1639748543573" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_3_reproducible_database_ascad_early_stopping.coverage" NAME="script_aes_3_reproducible_database_ascad_early_stopping Coverage Results" MODIFIED="1615650977558" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_44_reproducible_database_ascad.coverage" NAME="script_aes_44_reproducible_database_ascad Coverage Results" MODIFIED="1615608453549" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />
     <SUITE FILE_PATH="coverage/aisy_framework$script_aes_50_reproducible_database_ascad.coverage" NAME="script_aes_50_reproducible_database_ascad Coverage Results" MODIFIED="1615609799929" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/scripts" />

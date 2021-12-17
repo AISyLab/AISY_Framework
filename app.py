@@ -114,9 +114,9 @@ def scripts():
     return "ok"
 
 
-databases_root_folder = "C:/Users/guilh/PycharmProjects/aisy_framework_2021/resources/databases/"
-datasets_root_folder = "D:/traces/"
-resources_root_folder = "C:\\Users\\guilh\\PycharmProjects\\aisy_framework_2021\\resources\\"
+databases_root_folder = "my_database_location"
+datasets_root_folder = "my_datasets_location"
+resources_root_folder = "my_resources_location"
 
 
 @app.route('/databases')
@@ -144,9 +144,6 @@ def result(analysis_id, table_name):
     if analysis.settings["use_early_stopping"]:
         for metric in analysis.settings["early_stopping"]["metrics"]:
             all_metric_plots = views.metric_early_stopping_plots(all_metric_plots, analysis.id, db_select, metric)
-    if analysis.settings["use_bayesian_optimization"]:
-        if analysis.settings["bayesian_optimization"]["metric"] == "guessing_entropy":
-            all_metric_plots = views.metric_early_stopping_plots(all_metric_plots, analysis.id, db_select, "guessing_entropy")
     all_accuracy_plots = views.metric_plots(analysis.id, db_select, "accuracy", "Accuracy")
     dash_app_accuracy.layout = html.Div(children=[all_accuracy_plots])
     all_loss_plots = views.metric_plots(analysis.id, db_select, "loss", "Loss")
