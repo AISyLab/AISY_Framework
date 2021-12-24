@@ -21,7 +21,7 @@ def run(dataset, settings, model, *args):
     for key_byte_hypothesis in range(0, 256):
         key_h = bytearray.fromhex(settings["key"])
         key_h[settings["leakage_model"]["byte"]] = key_byte_hypothesis
-        labels_key_hypothesis[key_byte_hypothesis][:] = aes_intermediates_sr_ge(plaintext, ciphertext, key_h, settings["leakage_model"])
+        labels_key_hypothesis[key_byte_hypothesis][:] = aes_intermediates(plaintext, ciphertext, key_h, settings["leakage_model"])
 
     good_key = settings["good_key"]
 
