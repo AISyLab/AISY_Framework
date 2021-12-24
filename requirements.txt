@@ -17,5 +17,5 @@ pytz
 sklearn
 scipy
 dash_bootstrap_components
-aisy-sca==0.2.5
+aisy-sca==0.2.7
 aisy-database==0.2.0
