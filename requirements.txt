@@ -16,6 +16,6 @@ termcolor
 pytz
 sklearn
 scipy
-dash_bootstrap_components
+dash_bootstrap_components==0.13.1
 aisy-sca==0.2.7
 aisy-database==0.2.0
