@@ -19,7 +19,9 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models" />
+    <list default="true" id="ec130526-2ca5-4be7-8304-ede30ecd8a99" name="Default Changelist" comment="datasets and models">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -67,7 +69,7 @@
     <property name="TERMINAL_CUSTOM_COMMANDS_GOT_IT" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="ReST" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/scripts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/custom/custom_metrics" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -79,11 +81,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\custom\custom_metrics" />
       <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\scripts" />
       <recent name="C:\Users\guilh\PycharmProjects\aisy_framework" />
       <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\webapp\templates\dashboard" />
       <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\webapp\templates" />
-      <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\webapp\mvc\views" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\guilh\PycharmProjects\aisy_framework\scripts" />
@@ -294,6 +296,10 @@
       <workItem from="1639768474143" duration="83000" />
       <workItem from="1640104215466" duration="1625000" />
       <workItem from="1640352764614" duration="52000" />
+      <workItem from="1640354370474" duration="37000" />
+      <workItem from="1640788826130" duration="11000" />
+      <workItem from="1641484080065" duration="248000" />
+      <workItem from="1643192646609" duration="91000" />
     </task>
     <task id="LOCAL-00001" summary="fixes in ensembles">
       <created>1614612585866</created>

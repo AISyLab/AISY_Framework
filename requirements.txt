@@ -10,7 +10,7 @@ python-dotenv
 flaskcode
 pandas
 hiplot
-dash
+dash==1.21.0
 h5py==2.10.0
 termcolor
 pytz
