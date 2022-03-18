@@ -21,7 +21,7 @@ flask run
 
 ### Requirements
 
-This framework requires ```tensorflow==2.0.0```, ```keras==2.1.6``` and ```python==3.7```.
+This framework required ```tensorflow==2.0.0```, ```keras==2.1.6``` and ```python==3.7```.
 
 All requires python packages are listed in ```requirements.txt```.
 
