@@ -11,6 +11,7 @@ flaskcode
 pandas
 hiplot
 dash==1.21.0
+werkzeug==2.0.3
 h5py==2.10.0
 termcolor
 pytz
