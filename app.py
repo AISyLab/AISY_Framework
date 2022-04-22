@@ -118,25 +118,32 @@ databases_root_folder = "my_database_location"
 datasets_root_folder = "my_datasets_location"
 resources_root_folder = "my_resources_location"
 
+def adapt_folder_path(path):
+    if "/" in path and path[len(path) - 1] != "/":
+        path += "/"
+    if "\\" in path and path[len(path) - 1] != "\\":
+        path += "\\"
+    return path
+
 
 @app.route('/databases')
 def databases():
     app_controller = AppController()
-    all_tables, all_tables_names = app_controller.get_databases_tables(databases_root_folder)
+    all_tables, all_tables_names = app_controller.get_databases_tables(adapt_folder_path(databases_root_folder))
     return render_template("tables.html", all_tables=all_tables, all_tables_names=all_tables_names)
 
 
 @app.route('/search/<string:table_name>')
 def search(table_name):
     app_controller = AppController()
-    analyses = app_controller.get_search(databases_root_folder, table_name)
+    analyses = app_controller.get_search(adapt_folder_path(databases_root_folder), table_name)
 
     return render_template("dashboard/search.html", analyses=analyses)
 
 
 @app.route('/result/<int:analysis_id>/<string:table_name>')
 def result(analysis_id, table_name):
-    db_select = DBSelect(databases_root_folder + table_name)
+    db_select = DBSelect(adapt_folder_path(databases_root_folder) + table_name)
 
     analysis = db_select.select_analysis(Analysis, analysis_id)
 
@@ -202,14 +209,14 @@ def documentation():
 
 @app.route("/generate_reproducible_script/<int:analysis_id>/<string:table_name>")
 def generate_reproducible_script(analysis_id, table_name):
-    write_reproducible_script(f"script_reproducible_{analysis_id}", databases_root_folder, table_name, analysis_id)
+    write_reproducible_script(f"script_reproducible_{analysis_id}", adapt_folder_path(databases_root_folder), table_name, analysis_id)
     return "ok"
 
 
 @app.route("/generate_fully_reproducible_script/<int:analysis_id>/<string:table_name>")
 def generate_fully_reproducible_script(analysis_id, table_name):
-    write_fully_reproducible_script(f"script_fully_reproducible_{analysis_id}", databases_root_folder, table_name, analysis_id)
-    write_fully_reproducible_script(f"script_fully_reproducible_from_db_{analysis_id}", databases_root_folder, table_name, analysis_id,
+    write_fully_reproducible_script(f"script_fully_reproducible_{analysis_id}", adapt_folder_path(databases_root_folder), table_name, analysis_id)
+    write_fully_reproducible_script(f"script_fully_reproducible_from_db_{analysis_id}", adapt_folder_path(databases_root_folder), table_name, analysis_id,
                                     from_db=True)
     return "ok"
 
@@ -220,7 +227,7 @@ def gen_plot(analysis_id, table_name, metric):
     if not os.path.exists(dir_analysis_id):
         os.makedirs(dir_analysis_id)
 
-    db_select = DBSelect(databases_root_folder + table_name)
+    db_select = DBSelect(adapt_folder_path(databases_root_folder) + table_name)
     figure_controller = FigureController(dir_analysis_id, analysis_id, db_select)
 
     if metric == "accuracy":
@@ -250,7 +257,7 @@ def gen_plot(analysis_id, table_name, metric):
 
 @app.route("/delete_analysis/<int:analysis_id>/<string:table_name>")
 def delete_analysis(analysis_id, table_name):
-    db_delete = DBDelete(databases_root_folder + table_name)
+    db_delete = DBDelete(adapt_folder_path(databases_root_folder) + table_name)
     db_delete.soft_delete_analysis_from_table(Analysis, analysis_id)
 
     return "ok"
