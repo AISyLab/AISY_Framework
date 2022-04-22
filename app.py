@@ -223,7 +223,7 @@ def generate_fully_reproducible_script(analysis_id, table_name):
 
 @app.route("/generate_plot/<int:analysis_id>/<string:table_name>/<metric>")
 def gen_plot(analysis_id, table_name, metric):
-    dir_analysis_id = f"{resources_root_folder}figures/{table_name}_{analysis_id}"
+    dir_analysis_id = f"{adapt_folder_path(resources_root_folder)}figures/{table_name}_{analysis_id}"
     if not os.path.exists(dir_analysis_id):
         os.makedirs(dir_analysis_id)
 
